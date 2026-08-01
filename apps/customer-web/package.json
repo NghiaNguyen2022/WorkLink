@@ -1,0 +1,21 @@
+{
+  "name": "@workforce/customer-web",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "echo test customer-web",
+    "lint": "echo lint customer-web",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@workforce/api-client": "workspace:*",
+    "@workforce/shared-types": "workspace:*",
+    "@workforce/validation": "workspace:*",
+    "@workforce/ui-web": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

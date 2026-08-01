@@ -1,0 +1,21 @@
+{
+  "name": "@workforce/mobile-app",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "expo start",
+    "build": "echo configure EAS build",
+    "test": "echo test mobile-app",
+    "lint": "echo lint mobile-app",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@workforce/api-client": "workspace:*",
+    "@workforce/shared-types": "workspace:*",
+    "@workforce/validation": "workspace:*",
+    "@workforce/ui-mobile": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

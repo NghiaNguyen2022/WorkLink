@@ -1,0 +1,18 @@
+[
+  {
+    "id": "job_001",
+    "category": "event_reception",
+    "title": "Le tan su kien khai truong",
+    "status": "PENDING_VERIFICATION",
+    "startAt": "2026-08-15T07:00:00+07:00",
+    "endAt": "2026-08-15T17:00:00+07:00",
+    "location": {
+      "district": "Quan 7",
+      "city": "TP.HCM"
+    },
+    "headcount": 4,
+    "customerBudget": 600000,
+    "suggestedPrice": 680000,
+    "currency": "VND"
+  }
+]

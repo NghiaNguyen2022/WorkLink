@@ -1,0 +1,13 @@
+[
+  {
+    "jobId": "job_001",
+    "basePrice": 520000,
+    "timeSurcharge": 50000,
+    "locationSurcharge": 30000,
+    "skillSurcharge": 80000,
+    "customerTotal": 680000,
+    "workerPayoutRate": 0.75,
+    "workerPayout": 510000,
+    "platformGross": 170000
+  }
+]

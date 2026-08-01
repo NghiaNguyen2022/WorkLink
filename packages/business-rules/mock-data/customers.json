@@ -1,0 +1,10 @@
+[
+  {
+    "id": "cus_001",
+    "type": "business",
+    "name": "ABC Event Co., Ltd.",
+    "verified": true,
+    "rating": 4.7,
+    "defaultLocation": "Quan 1, TP.HCM"
+  }
+]

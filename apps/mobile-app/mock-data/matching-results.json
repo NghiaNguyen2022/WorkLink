@@ -1,0 +1,13 @@
+[
+  {
+    "jobId": "job_001",
+    "workerId": "wrk_001",
+    "score": 91,
+    "reasons": [
+      "Da xac minh ky nang le tan",
+      "Trong lich",
+      "Gan dia diem"
+    ],
+    "warnings": []
+  }
+]

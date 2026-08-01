@@ -1,0 +1,20 @@
+{
+  "name": "@workforce/operations-web",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "echo test operations-web",
+    "lint": "echo lint operations-web",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@workforce/api-client": "workspace:*",
+    "@workforce/shared-types": "workspace:*",
+    "@workforce/ui-web": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

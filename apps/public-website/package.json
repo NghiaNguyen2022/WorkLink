@@ -1,0 +1,18 @@
+{
+  "name": "@workforce/public-website",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "test": "echo test public-website",
+    "lint": "echo lint public-website",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@workforce/ui-web": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

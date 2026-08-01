@@ -1,0 +1,9 @@
+[
+  {
+    "id": "asg_001",
+    "jobId": "job_001",
+    "workerId": "wrk_001",
+    "status": "PROPOSED",
+    "workerPayout": 510000
+  }
+]

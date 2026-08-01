@@ -1,0 +1,22 @@
+{
+  "name": "@workforce/api",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test",
+    "lint": "echo lint api",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@workforce/shared-types": "workspace:*",
+    "@workforce/validation": "workspace:*",
+    "@workforce/business-rules": "workspace:*",
+    "@workforce/pricing-engine": "workspace:*",
+    "@workforce/matching-engine": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}

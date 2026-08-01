@@ -1,0 +1,34 @@
+[
+  {
+    "id": "wrk_001",
+    "fullName": "Nguyen Thi Lan",
+    "skills": [
+      "housekeeping",
+      "event_reception"
+    ],
+    "verifiedLevel": "V4",
+    "rating": 4.8,
+    "completedJobs": 126,
+    "serviceAreas": [
+      "Quan 7",
+      "Nha Be"
+    ],
+    "available": true
+  },
+  {
+    "id": "wrk_002",
+    "fullName": "Tran Minh Khoa",
+    "skills": [
+      "warehouse_helper",
+      "security_event"
+    ],
+    "verifiedLevel": "V3",
+    "rating": 4.6,
+    "completedJobs": 58,
+    "serviceAreas": [
+      "Thu Duc",
+      "Binh Thanh"
+    ],
+    "available": true
+  }
+]
