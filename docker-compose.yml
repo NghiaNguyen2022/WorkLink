@@ -1,14 +1,43 @@
 services:
-  postgres:
-    image: postgres:16-alpine
+  mysql:
+    image: mysql:8.4
+    container_name: worklink-mysql
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+00:00
     environment:
-      POSTGRES_DB: workforce
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports: ["5432:5432"]
-    volumes: ["postgres_data:/var/lib/postgresql/data"]
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      MYSQL_DATABASE: ${DB_NAME:-worklink}
+      MYSQL_USER: ${DB_USER:-worklink}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-worklink123}
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - worklink_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
   redis:
     image: redis:7-alpine
-    ports: ["6379:6379"]
+    container_name: worklink-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - worklink_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
 volumes:
-  postgres_data:
+  worklink_mysql_data:
+  worklink_redis_data:

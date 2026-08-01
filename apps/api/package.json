@@ -1,25 +1,42 @@
 {
   "name": "@worklink/api",
   "private": true,
-  "version": "0.1.0",
-  "type": "module",
+  "version": "0.2.1",
+  "type": "commonjs",
   "scripts": {
-    "dev": "tsx watch src/main.ts",
-    "build": "tsc -p tsconfig.json",
+    "dev": "dotenv -e ../../.env -- nest start --watch",
+    "build": "nest build",
     "start": "node dist/main.js",
+    "start:prod": "dotenv -e ../../.env -- node dist/main.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "node --test dist/**/*.test.js",
-    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+    "test": "node --test",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "db:migrate": "dotenv -e ../../.env -- tsx src/database/migrate.ts",
+    "db:seed": "dotenv -e ../../.env -- tsx src/database/seed.ts",
+    "db:reset": "dotenv -e ../../.env -- tsx src/database/reset.ts"
   },
   "dependencies": {
-    "@worklink/shared-types": "workspace:*",
-    "@worklink/pricing-engine": "workspace:*",
-    "@worklink/matching-engine": "workspace:*"
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/config": "^4.0.2",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/platform-express": "^11.1.6",
+    "@nestjs/swagger": "^11.2.0",
+    "bcryptjs": "^3.0.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "drizzle-orm": "^0.44.7",
+    "joi": "^18.2.3",
+    "mysql2": "^3.14.3",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
-    "@types/node": "^22.10.0",
-    "tsx": "^4.19.2",
-    "typescript": "^5.7.3"
+    "@nestjs/cli": "^11.0.10",
+    "@types/node": "^22.15.0",
+    "dotenv-cli": "^8.0.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.8.3"
   }
 }
