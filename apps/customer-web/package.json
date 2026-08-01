@@ -1,21 +1,22 @@
 {
-  "name": "@workforce/customer-web",
+  "name": "@worklink/customer-web",
   "private": true,
   "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "test": "echo test customer-web",
-    "lint": "echo lint customer-web",
-    "typecheck": "tsc --noEmit"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test dist/**/*.test.js",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "dependencies": {
-    "@workforce/api-client": "workspace:*",
-    "@workforce/shared-types": "workspace:*",
-    "@workforce/validation": "workspace:*",
-    "@workforce/ui-web": "workspace:*"
+    "@worklink/shared-types": "workspace:*",
+    "@worklink/api-client": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.7.0"
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
   }
 }

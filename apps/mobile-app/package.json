@@ -1,21 +1,22 @@
 {
-  "name": "@workforce/mobile-app",
+  "name": "@worklink/mobile-app",
   "private": true,
   "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "dev": "expo start",
-    "build": "echo configure EAS build",
-    "test": "echo test mobile-app",
-    "lint": "echo lint mobile-app",
-    "typecheck": "tsc --noEmit"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test dist/**/*.test.js",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "dependencies": {
-    "@workforce/api-client": "workspace:*",
-    "@workforce/shared-types": "workspace:*",
-    "@workforce/validation": "workspace:*",
-    "@workforce/ui-mobile": "workspace:*"
+    "@worklink/shared-types": "workspace:*",
+    "@worklink/api-client": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.7.0"
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
   }
 }

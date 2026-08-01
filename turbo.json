@@ -14,6 +14,18 @@
         ".next/**"
       ]
     },
+    "typecheck": {
+      "dependsOn": [
+        "^typecheck"
+      ],
+      "outputs": []
+    },
+    "lint": {
+      "dependsOn": [
+        "^lint"
+      ],
+      "outputs": []
+    },
     "test": {
       "dependsOn": [
         "^build"
@@ -22,7 +34,8 @@
         "coverage/**"
       ]
     },
-    "lint": {},
-    "typecheck": {}
+    "clean": {
+      "cache": false
+    }
   }
 }

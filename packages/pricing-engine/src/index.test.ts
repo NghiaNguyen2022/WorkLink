@@ -1,0 +1,1 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {calculatePrice} from './index.js';test('calculates 75 percent payout',()=>{const q=calculatePrice({basePrice:600000,workerPayoutRate:.75});assert.equal(q.workerPayout,450000);assert.equal(q.platformGross,150000)});
