@@ -7,7 +7,7 @@ import {
   workerAvailability,
   workerProfiles,
   workerSkills,
-} from '../../database/schema';
+} from '../../database/schema/index';
 
 @Injectable()
 export class WorkersService {
@@ -41,7 +41,10 @@ export class WorkersService {
         isSuspended: workerProfiles.isSuspended,
       })
       .from(workerProfiles)
-      .innerJoin(users, eq(workerProfiles.userId, users.id))
+      .innerJoin(
+        users,
+        eq(workerProfiles.userId, users.id),
+      )
       .orderBy(asc(users.fullName));
   }
 
@@ -78,7 +81,10 @@ export class WorkersService {
         isSuspended: workerProfiles.isSuspended,
       })
       .from(workerProfiles)
-      .innerJoin(users, eq(workerProfiles.userId, users.id))
+      .innerJoin(
+        users,
+        eq(workerProfiles.userId, users.id),
+      )
       .where(eq(workerProfiles.id, id))
       .limit(1);
 

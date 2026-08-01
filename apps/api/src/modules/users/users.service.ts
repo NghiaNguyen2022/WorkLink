@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { asc, eq } from 'drizzle-orm';
 
 import { DatabaseService } from '../../database/database.service';
-import { users } from '../../database/schema';
+import { users } from '../../database/schema/index';
 
 export interface SafeUser {
   id: string;

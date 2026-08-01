@@ -6,7 +6,7 @@ import {
   customerLocations,
   customerProfiles,
   users,
-} from '../../database/schema';
+} from '../../database/schema/index';
 
 @Injectable()
 export class CustomersService {

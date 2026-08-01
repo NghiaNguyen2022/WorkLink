@@ -9,7 +9,7 @@ import {
 } from 'mysql2/promise';
 
 import { getMySqlPoolOptions } from './database.config';
-import * as schema from './schema';
+import * as schema from './schema/index';
 
 export const MYSQL_POOL = Symbol('WORKLINK_MYSQL_POOL');
 export const DATABASE = Symbol('WORKLINK_DATABASE');

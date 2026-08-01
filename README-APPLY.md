@@ -1,43 +1,39 @@
-# WorkLink Baseline 02.2 — Unified Database Access
+# WorkLink Baseline 02.3 — Schema Resolution Fix
 
-Bản patch này chuẩn hóa backend về một cách truy cập database duy nhất:
+Nguyên nhân 50 lỗi TypeScript:
 
 ```text
-Business Service
-    ↓ inject
-DatabaseService
-    ↓
-Drizzle MySQL
-    ↓
-mysql2 Pool
+apps/api/src/database/schema.ts          # schema cũ
+apps/api/src/database/schema/index.ts    # schema mới
 ```
 
-## Quy tắc bắt buộc
-
-Ngoài thư mục `src/database`, source nghiệp vụ không được:
-
-- import `mysql2`
-- import `drizzle-orm/mysql2`
-- inject token `DATABASE`
-- inject token `MYSQL_POOL`
-- gọi `createPool()`
-- tự tạo kết nối MySQL
-
-Các module nghiệp vụ chỉ inject:
+Các import dạng:
 
 ```ts
-constructor(private readonly database: DatabaseService) {}
+import { users } from '../../database/schema';
 ```
 
-và truy vấn qua:
+được TypeScript resolve vào file `schema.ts` cũ trước thư mục `schema/index.ts`.
 
-```ts
-this.database.db
+Bản này thực hiện:
+
+1. Xóa `apps/api/src/database/schema.ts`.
+2. Đổi toàn bộ import sang `schema/index`.
+3. Chỉ dùng `DatabaseService` cho module nghiệp vụ.
+4. Bổ sung `DatabaseService.ping()` cho Health API.
+5. Sửa kiểu `JWT_EXPIRES_IN` trong `AuthModule`.
+
+## Áp dụng tự động
+
+Giải nén gói vào một thư mục tạm, sau đó chạy:
+
+```powershell
+cd <THU_MUC_GIAI_NEN>\WorkLink-Baseline-02.3-Schema-Fix
+
+powershell -ExecutionPolicy Bypass `
+  -File .\apply.ps1 `
+  -ProjectRoot D:\Source\Git\WorkLink
 ```
-
-## Áp dụng
-
-Chép toàn bộ nội dung gói này vào thư mục gốc WorkLink và ghi đè file trùng.
 
 Sau đó:
 
@@ -47,22 +43,26 @@ cd D:\Source\Git\WorkLink
 pnpm --filter @worklink/api lint
 pnpm check
 pnpm --filter @worklink/api build
-```
-
-Rà soát truy cập database:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File apps\api\scripts\audit-database-access.ps1
-```
-
-Kết quả đúng:
-
-```text
-PASS: Database access is centralized through DatabaseService.
-```
-
-Chạy API:
-
-```powershell
 pnpm --filter @worklink/api dev
 ```
+
+## Rà soát
+
+```powershell
+Test-Path apps\api\src\database\schema.ts
+```
+
+Kết quả phải là:
+
+```text
+False
+```
+
+Tìm import schema chưa chuẩn:
+
+```powershell
+Get-ChildItem apps\api\src -Recurse -File -Include *.ts |
+Select-String "database/schema'"
+```
+
+Không được còn kết quả nào.

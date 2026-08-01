@@ -3,6 +3,7 @@ import {
   Injectable,
   OnApplicationShutdown,
 } from '@nestjs/common';
+import { sql } from 'drizzle-orm';
 import type { Pool } from 'mysql2/promise';
 
 import {
@@ -12,10 +13,10 @@ import {
 } from './database.provider';
 
 /**
- * Cổng truy cập database duy nhất dành cho các module nghiệp vụ.
+ * Cổng truy cập database duy nhất của các module nghiệp vụ.
  *
- * Các service bên ngoài `src/database` chỉ được inject class này.
- * Không inject trực tiếp Pool, DATABASE hoặc MYSQL_POOL.
+ * Module bên ngoài src/database không được inject pool hoặc token database.
+ * Tất cả truy vấn nghiệp vụ đi qua `database.db`.
  */
 @Injectable()
 export class DatabaseService implements OnApplicationShutdown {
@@ -26,6 +27,15 @@ export class DatabaseService implements OnApplicationShutdown {
     @Inject(MYSQL_POOL)
     private readonly pool: Pool,
   ) {}
+
+  async ping(): Promise<boolean> {
+    try {
+      await this.db.execute(sql`SELECT 1`);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 
   async onApplicationShutdown(): Promise<void> {
     await this.pool.end();
