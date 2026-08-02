@@ -66,3 +66,17 @@ Baseline 07 chuyển sang trạng thái IMPLEMENTED — chờ UAT end-to-end.
 - Operations Web exception overview.
 
 Baseline 08 ở trạng thái IMPLEMENTED — chờ UAT.
+
+## 2026-08-02 — Baseline 10
+
+Đã triển khai Reporting, Risk và Operations Dashboard:
+
+- KPI vận hành.
+- KPI tài chính.
+- KPI chất lượng.
+- Risk indicators.
+- Monthly trend.
+- CSV export.
+- Dashboard và Reports page.
+
+Baseline 10 ở trạng thái IMPLEMENTED — chờ UAT.

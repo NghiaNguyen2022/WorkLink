@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import {
-  BanknoteArrowDown,
+  Banknote,
   BriefcaseBusiness,
   CircleCheckBig,
   Clock3,
@@ -124,7 +124,7 @@ export function DashboardPage() {
               value={`${query.data.finance.payoutSlaRate}%`}
             />
             <KpiCard
-              icon={BanknoteArrowDown}
+              icon={Banknote}
               label="Worker payout"
               value={`${query.data.finance.workerPayouts.toLocaleString(
                 'vi-VN',

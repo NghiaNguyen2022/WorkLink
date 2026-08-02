@@ -9,8 +9,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import type { Response } from 'express';
-
 import {
   ExportQueryDto,
   ReportingQueryDto,
@@ -49,7 +47,11 @@ export class ReportingController {
   })
   async exportCsv(
     @Query() query: ExportQueryDto,
-    @Res() response: Response,
+    @Res()
+    response: {
+      setHeader(name: string, value: string): void;
+      send(body: string): void;
+    },
   ) {
     const content =
       await this.service.exportCsv(query);

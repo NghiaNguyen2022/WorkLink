@@ -12,6 +12,7 @@ import { HealthModule } from './modules/health/health.module';
 import { JobsModule } from './modules/jobs/jobs.module';
 import { MatchingModule } from './modules/matching/matching.module';
 import { QualityModule } from './modules/quality/quality.module';
+import { ReportingModule } from './modules/reporting/reporting.module';
 import { UsersModule } from './modules/users/users.module';
 import { WorkersModule } from './modules/workers/workers.module';
 
@@ -34,6 +35,7 @@ import { WorkersModule } from './modules/workers/workers.module';
     ExceptionsModule,
     FinanceModule,
     QualityModule,
+    ReportingModule,
   ],
 })
 export class AppModule {}

@@ -1,6 +1,8 @@
 import {
+  Award,
   BriefcaseBusiness,
   ChevronRight,
+  FileChartColumnIncreasing,
   LayoutDashboard,
   Settings,
   Users,
@@ -10,6 +12,12 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 const navItems = [
   { to: '/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
   { to: '/jobs', label: 'Công việc', icon: BriefcaseBusiness },
+  { to: '/training', label: 'Đào tạo', icon: Award },
+  {
+    to: '/reports',
+    label: 'Báo cáo',
+    icon: FileChartColumnIncreasing,
+  },
   { to: '/workers', label: 'Nhân sự', icon: Users, disabled: true },
   { to: '/settings', label: 'Thiết lập', icon: Settings, disabled: true },
 ];
@@ -19,7 +27,11 @@ export function AppLayout() {
   const pageLabel =
     location.pathname.startsWith('/jobs')
       ? 'Công việc'
-      : 'Tổng quan';
+      : location.pathname.startsWith('/training')
+        ? 'Đào tạo'
+        : location.pathname.startsWith('/reports')
+          ? 'Báo cáo'
+          : 'Tổng quan';
 
   return (
     <div className="app-shell">

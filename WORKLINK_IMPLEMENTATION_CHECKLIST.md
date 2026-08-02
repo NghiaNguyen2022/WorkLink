@@ -146,3 +146,40 @@
 - [ ] Form mở dispute đầy đủ.
 - [ ] Form fulfill replacement.
 - [ ] Form approve adjustment.
+
+# Baseline 10 — Reporting, Risk & Dashboard
+
+## Đã triển khai
+
+- [x] Dashboard KPI API.
+- [x] Bộ lọc from/to.
+- [x] Fill rate.
+- [x] Offer acceptance rate.
+- [x] Average time-to-fill.
+- [x] No-show và cancellation rate.
+- [x] Check-in delta.
+- [x] Payout SLA.
+- [x] Settlement variance.
+- [x] Review và dispute metrics.
+- [x] Certificate expiry.
+- [x] Risk alerts.
+- [x] CSV export.
+- [x] Operations Dashboard.
+- [x] Reports page.
+
+## Chưa hoàn tất/UAT
+
+- [ ] UAT KPI bằng dữ liệu thật.
+- [ ] Xác nhận công thức KPI.
+- [ ] UAT Risk Alert.
+- [ ] UAT CSV trên Excel.
+- [ ] Phân quyền báo cáo.
+
+## Baseline 10.2 — Training Schema Export Fix
+
+- [x] Export schema training trong database/schema/index.ts.
+- [x] Khôi phục các export workerCertificates và workerBadges.
+- [x] Khôi phục export trainingCourses, enrollments, assessments.
+- [x] ReportingController không phụ thuộc @types/express.
+- [ ] Chạy lại API typecheck.
+- [ ] Chạy lại API build.

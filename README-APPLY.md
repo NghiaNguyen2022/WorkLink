@@ -1,56 +1,43 @@
-# WorkLink Baseline 10 — Reporting, Risk & Operations Dashboard
+# WorkLink Baseline 10.3 — Lucide Icon Fix
 
-## Phạm vi
+## Lỗi
 
-### KPI vận hành
+```text
+lucide-react does not provide an export named BanknoteArrowDown
+```
 
-- Tổng số Job.
-- Job hoàn tất.
-- Fill rate.
-- Time-to-fill trung bình.
-- No-show rate.
-- Cancellation rate.
-- Check-in delta trung bình.
-- Tỷ lệ Job được đánh giá.
+## Sửa
 
-### KPI tài chính và chất lượng
+Thay:
 
-- Tổng tiền thu khách hàng.
-- Tổng tiền trả Worker.
-- Payment failure rate.
-- Payout SLA.
-- Settlement variance.
-- Complaint/Dispute rate.
-- Chứng nhận sắp hết hạn.
+```ts
+BanknoteArrowDown
+```
 
-### Risk indicators
+bằng:
 
-- Worker cancellation rate cao.
-- Worker on-time rate thấp.
-- Payment thất bại.
-- Job thiếu nhân sự gần giờ bắt đầu.
-- Certificate hết hạn trong 30 ngày.
-- Support Case CRITICAL chưa xử lý.
-
-### Operations Web
-
-- Dashboard KPI thực.
-- Bộ lọc thời gian.
-- Risk Alert panel.
-- Báo cáo chi tiết.
-- Export CSV.
+```ts
+Banknote
+```
 
 ## Áp dụng
 
 ```powershell
 cd D:\Source\Git\WorkLink
-node scripts/apply-baseline-10.mjs
-
-pnpm --filter @worklink/api typecheck
-pnpm --filter @worklink/api build
-
-pnpm --filter @worklink/operations-web typecheck
-pnpm --filter @worklink/operations-web build
+node scripts/apply-baseline-10-3.mjs
 ```
 
-Không có migration mới. Baseline này chỉ đọc và tổng hợp dữ liệu nghiệp vụ hiện có.
+Sau đó chạy:
+
+```powershell
+pnpm --filter @worklink/operations-web typecheck
+pnpm --filter @worklink/operations-web build
+pnpm --filter @worklink/operations-web dev
+```
+
+Nếu Vite vẫn giữ cache cũ:
+
+```powershell
+Remove-Item -Recurse -Force apps\operations-web\node_modules\.vite -ErrorAction SilentlyContinue
+pnpm --filter @worklink/operations-web dev
+```

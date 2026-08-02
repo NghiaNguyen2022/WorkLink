@@ -8,3 +8,4 @@ export * from './execution';
 export * from './finance';
 export * from './quality';
 export * from './exceptions';
+export * from './training';
