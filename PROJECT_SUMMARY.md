@@ -1,63 +1,40 @@
 # WORKLINK PROJECT SUMMARY
 
-## Nguồn yêu cầu
+## Điều chỉnh kiến trúc frontend
 
-- BPRD chuẩn: `De_xuat_BPR_Nen_tang_Nhan_su_Theo_gio_v1.1.docx`.
-- Phiên bản BPRD: 1.1, ngày 01/08/2026.
-- Định vị: Managed Workforce Marketplace.
-- Thị trường MVP: Việt Nam, pilot đề xuất tại TP.HCM.
+Ngày 2026-08-02, gói FE đầu tiên đã tạo nhầm `apps/web`.
+Thư mục này không thuộc kiến trúc WorkLink và phải được xóa.
 
-## Nguyên tắc bảo vệ
+Phân vai chuẩn:
 
-1. Bám mã BR/BP/BRU/FR/NFR/DR/AR trong BPRD.
-2. Mỗi baseline gom 2–3 chức năng trong cùng một luồng nghiệp vụ.
-3. Không tạo module rời rạc không có đầu vào/đầu ra nghiệp vụ.
-4. Không ghi đè hoặc xóa lịch sử giao dịch, đánh giá, đối soát.
-5. Mọi thay đổi trạng thái quan trọng phải có audit/history.
-6. Mọi payment/refund/adjustment phải có mã tham chiếu và idempotency.
-7. Matching và risk rules phải có version.
-8. Công việc rủi ro cao cần phê duyệt thủ công.
-9. Dữ liệu nhạy cảm áp dụng nguyên tắc need-to-know.
-10. Checklist và Project Summary cập nhật append-only sau mỗi baseline.
+- `operations-web`: điều phối, quản trị, kiểm soát và moderation.
+- `customer-web`: giao diện người thuê.
+- `mobile-app`: giao diện người lao động.
+- `public-website`: nội dung công khai.
 
-## Tiến độ đến Baseline 06
+## Baseline 07 hiện tại
 
-### Đã hoàn thành
-
-- Core architecture: monorepo, NestJS, Drizzle, MySQL, Redis.
-- User/customer/worker profiles.
-- Skill, availability và service area.
-- Job posting, verification và pricing.
-- Candidate matching và offer.
-- Assignment và giữ lịch.
-- Check-in/out, evidence, incidents và customer confirmation.
-- Settlement, customer charge, worker payout và earnings.
-
-### Baseline đang triển khai
-
-## Baseline 07 – Chất lượng sau công việc và quan hệ thuê lại
-
-Phạm vi:
+Backend đã triển khai:
 
 1. Review hai chiều.
-2. Cập nhật hồ sơ năng lực và reliability.
-3. Preferred, block và re-hire.
+2. Metric worker/customer có idempotency.
+3. Preferred, Neutral và Blocked.
+4. Re-hire.
+5. Moderation và audit.
 
-BPRD mapping:
+Operations Web đã triển khai:
 
-- BP-11 – Đánh giá và cập nhật năng lực.
-- BP-15 – Thuê lại, nhóm ưu tiên và công việc định kỳ.
-- BRU-013 – Người thuê có rating/risk score.
-- BRU-014 – Không xóa đánh giá.
-- BRU-016 – Không dùng thuộc tính nhạy cảm để scoring.
-- BRU-024 – Rule matching/risk có version và ngày hiệu lực.
+1. App shell.
+2. Dashboard vận hành.
+3. Job list và Job detail.
+4. Review UI phục vụ vận hành/UAT.
+5. Relationship actions.
+6. Re-hire form.
+7. Responsive states.
 
-## Lịch sử cập nhật
+## Việc kế tiếp
 
-### 2026-08-02
-
-- Chuyển chiến lược phát triển từ baseline một chức năng sang 2–3 chức năng cùng nhóm nghiệp vụ.
-- Tạo checklist truy vết BPRD.
-- Đánh dấu Baseline 01–05 PASS.
-- Baseline 06 đã triển khai, chờ xác nhận PASS.
-- Mở Baseline 07.
+1. UAT Operations Web.
+2. Tích hợp BLOCKED và PREFERRED vào Matching.
+3. Dựng customer self-service trong `customer-web`.
+4. Dựng worker review trong `mobile-app`.

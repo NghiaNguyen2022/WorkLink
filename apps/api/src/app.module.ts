@@ -10,6 +10,7 @@ import { FinanceModule } from './modules/finance/finance.module';
 import { HealthModule } from './modules/health/health.module';
 import { JobsModule } from './modules/jobs/jobs.module';
 import { MatchingModule } from './modules/matching/matching.module';
+import { QualityModule } from './modules/quality/quality.module';
 import { UsersModule } from './modules/users/users.module';
 import { WorkersModule } from './modules/workers/workers.module';
 
@@ -30,6 +31,7 @@ import { WorkersModule } from './modules/workers/workers.module';
     MatchingModule,
     ExecutionModule,
     FinanceModule,
+    QualityModule,
   ],
 })
 export class AppModule {}
