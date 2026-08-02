@@ -5,6 +5,7 @@ import { envValidationSchema } from './common/config/env.validation';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CustomersModule } from './modules/customers/customers.module';
+import { ExecutionModule } from './modules/execution/execution.module';
 import { HealthModule } from './modules/health/health.module';
 import { JobsModule } from './modules/jobs/jobs.module';
 import { MatchingModule } from './modules/matching/matching.module';
@@ -26,6 +27,7 @@ import { WorkersModule } from './modules/workers/workers.module';
     WorkersModule,
     JobsModule,
     MatchingModule,
+    ExecutionModule,
   ],
 })
 export class AppModule {}
