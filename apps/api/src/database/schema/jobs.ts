@@ -128,10 +128,13 @@ export const jobs = mysqlTable(
     toolsProvidedBy: varchar('tools_provided_by', { length: 30 }),
     specialNotes: text('special_notes'),
     publishedAt: timestamp('published_at'),
+    submittedAt: timestamp('submitted_at'),
     verifiedAt: timestamp('verified_at'),
     verifiedByUserId: varchar('verified_by_user_id', { length: 36 }).references(
       () => users.id,
     ),
+    cancelledAt: timestamp('cancelled_at'),
+    cancellationReason: varchar('cancellation_reason', { length: 500 }),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at')
       .notNull()
@@ -254,6 +257,10 @@ export const pricingQuotes = mysqlTable(
     createdByUserId: varchar('created_by_user_id', {
       length: 36,
     }).references(() => users.id),
+    acceptedAt: timestamp('accepted_at'),
+    acceptedByUserId: varchar('accepted_by_user_id', {
+      length: 36,
+    }).references(() => users.id),
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
   (table) => ({
@@ -262,5 +269,47 @@ export const pricingQuotes = mysqlTable(
       table.quoteVersion,
     ),
     jobIndex: index('ix_pricing_quotes_job').on(table.jobId),
+  }),
+);
+
+export const jobVerificationNotes = mysqlTable(
+  'job_verification_notes',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    jobId: varchar('job_id', { length: 36 })
+      .notNull()
+      .references(() => jobs.id, { onDelete: 'cascade' }),
+    noteType: varchar('note_type', { length: 40 }).notNull(),
+    content: text('content').notNull(),
+    createdByUserId: varchar('created_by_user_id', {
+      length: 36,
+    })
+      .notNull()
+      .references(() => users.id),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => ({
+    jobIndex: index('ix_job_verification_notes_job').on(table.jobId),
+  }),
+);
+
+export const jobStatusHistory = mysqlTable(
+  'job_status_history',
+  {
+    id: varchar('id', { length: 36 }).primaryKey(),
+    jobId: varchar('job_id', { length: 36 })
+      .notNull()
+      .references(() => jobs.id, { onDelete: 'cascade' }),
+    fromStatus: varchar('from_status', { length: 40 }),
+    toStatus: varchar('to_status', { length: 40 }).notNull(),
+    reason: varchar('reason', { length: 500 }),
+    changedByUserId: varchar('changed_by_user_id', {
+      length: 36,
+    }).references(() => users.id),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => ({
+    jobIndex: index('ix_job_status_history_job').on(table.jobId),
+    statusIndex: index('ix_job_status_history_status').on(table.toStatus),
   }),
 );

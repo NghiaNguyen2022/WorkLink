@@ -1,0 +1,54 @@
+export const JOB_STATUSES = {
+  DRAFT: 'DRAFT',
+  PENDING_VERIFICATION: 'PENDING_VERIFICATION',
+  PENDING_INFORMATION: 'PENDING_INFORMATION',
+  VERIFIED: 'VERIFIED',
+  PRICED: 'PRICED',
+  PENDING_CUSTOMER_APPROVAL: 'PENDING_CUSTOMER_APPROVAL',
+  MATCHING: 'MATCHING',
+  CANCELLED: 'CANCELLED',
+} as const;
+
+export type JobStatus =
+  (typeof JOB_STATUSES)[keyof typeof JOB_STATUSES];
+
+const transitions: Record<JobStatus, readonly JobStatus[]> = {
+  DRAFT: [
+    JOB_STATUSES.PENDING_VERIFICATION,
+    JOB_STATUSES.CANCELLED,
+  ],
+  PENDING_VERIFICATION: [
+    JOB_STATUSES.PENDING_INFORMATION,
+    JOB_STATUSES.VERIFIED,
+    JOB_STATUSES.CANCELLED,
+  ],
+  PENDING_INFORMATION: [
+    JOB_STATUSES.PENDING_VERIFICATION,
+    JOB_STATUSES.VERIFIED,
+    JOB_STATUSES.CANCELLED,
+  ],
+  VERIFIED: [
+    JOB_STATUSES.PRICED,
+    JOB_STATUSES.CANCELLED,
+  ],
+  PRICED: [
+    JOB_STATUSES.PENDING_CUSTOMER_APPROVAL,
+    JOB_STATUSES.CANCELLED,
+  ],
+  PENDING_CUSTOMER_APPROVAL: [
+    JOB_STATUSES.MATCHING,
+    JOB_STATUSES.PRICED,
+    JOB_STATUSES.CANCELLED,
+  ],
+  MATCHING: [],
+  CANCELLED: [],
+};
+
+export function canTransition(
+  fromStatus: string,
+  toStatus: JobStatus,
+): boolean {
+  const allowed = transitions[fromStatus as JobStatus];
+
+  return allowed?.includes(toStatus) ?? false;
+}
