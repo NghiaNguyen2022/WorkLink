@@ -5,3 +5,4 @@ export * from './jobs';
 export * from './operations';
 export * from './matching';
 export * from './execution';
+export * from './finance';

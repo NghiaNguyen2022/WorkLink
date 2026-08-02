@@ -1,58 +1,43 @@
-# WorkLink Baseline 05 — Job Execution
+# WorkLink Baseline 06 — Finance & Settlement
 
-## Luồng vận hành
-
-```text
-Assignment CONFIRMED
-  → CHECKED_IN / ACTIVE
-  → CHECKED_OUT / WAITING_CONFIRMATION
-  → COMPLETED
-```
-
-Cấp Job:
+## Luồng
 
 ```text
-ASSIGNED
-  → IN_PROGRESS khi assignment đầu tiên check-in
-  → COMPLETED khi toàn bộ assignment hợp lệ đã hoàn tất
+Job COMPLETED
+→ PREPARE settlement
+→ REVIEW settlement
+→ APPROVE settlement
+→ phát sinh CUSTOMER_CHARGE và WORKER_PAYOUT
+→ ghi nhận thanh toán
+→ SETTLED
 ```
 
-Nhánh ngoại lệ:
+## Quy tắc tính
 
-```text
-CONFIRMED / ACTIVE
-  → NO_SHOW
-  → CANCELLED
-  → REPLACEMENT_REQUIRED
-```
+- Giá trị khách hàng gốc: `jobs.agreed_price`.
+- Worker base payout: `assignments.agreed_payout`.
+- Tăng ca theo đơn giá phút:
+  `agreed_payout / planned_minutes`.
+- Tăng ca chỉ tính khi work session đã được khách hàng xác nhận.
+- Retention trừ vào khoản trả worker.
+- Adjustment lưu thành dòng riêng, không sửa mất số gốc.
+- Settlement chỉ lập khi Job `COMPLETED`.
+- Mỗi Job có tối đa một Settlement đang hoạt động.
 
 ## API
 
 ```text
-GET  /api/jobs/:jobId/execution
-GET  /api/assignments/:assignmentId/execution
+POST /api/jobs/:jobId/settlement/prepare
+GET  /api/jobs/:jobId/settlement
+POST /api/jobs/:jobId/settlement/adjustments
+POST /api/jobs/:jobId/settlement/approve
 
-POST /api/assignments/:assignmentId/check-in
-POST /api/assignments/:assignmentId/evidence
-POST /api/assignments/:assignmentId/incidents
-POST /api/assignments/:assignmentId/check-out
-POST /api/assignments/:assignmentId/customer-confirm
-POST /api/assignments/:assignmentId/no-show
-POST /api/assignments/:assignmentId/cancel
-POST /api/assignments/:assignmentId/request-replacement
+POST /api/payments/:paymentId/mark-paid
+POST /api/payments/:paymentId/fail
+
+GET  /api/workers/:workerId/earnings
+GET  /api/finance/settlements
 ```
-
-## Quy tắc
-
-- Chỉ worker đúng assignment được check-in/check-out.
-- Check-in phải nằm trong bán kính cho phép, mặc định 500 m.
-- Có thể check-in sớm tối đa 60 phút.
-- Check-in trễ được ghi nhận vào nhật ký.
-- Check-out tính `actualMinutes`.
-- `overtimeMinutes` tính từ thời gian thực tế vượt thời lượng kế hoạch.
-- Khách hàng xác nhận mới hoàn tất assignment.
-- Khi tất cả assignment hoàn tất, job chuyển `COMPLETED`.
-- Hủy/no-show có thể mở yêu cầu thay người.
 
 ## Áp dụng
 
@@ -61,6 +46,7 @@ cd D:\Source\Git\WorkLink
 
 pnpm --filter @worklink/api lint
 pnpm check
+pnpm --filter @worklink/api build
 pnpm --filter @worklink/api db:migrate
 pnpm --filter @worklink/api dev
 ```
