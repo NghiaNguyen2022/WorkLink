@@ -1,47 +1,56 @@
-# WorkLink Baseline 08 — Exceptions, Replacement & Disputes
+# WorkLink Baseline 10 — Reporting, Risk & Operations Dashboard
 
 ## Phạm vi
 
-### 1. Cancellation / No-show assessment
+### KPI vận hành
 
-- Đánh giá theo số phút còn lại trước giờ bắt đầu.
-- Lưu policy version.
-- Tính phí khách hàng, bồi thường worker và phí nền tảng.
-- Không ghi đè payment gốc.
-- Có audit log.
+- Tổng số Job.
+- Job hoàn tất.
+- Fill rate.
+- Time-to-fill trung bình.
+- No-show rate.
+- Cancellation rate.
+- Check-in delta trung bình.
+- Tỷ lệ Job được đánh giá.
 
-### 2. Replacement workflow
+### KPI tài chính và chất lượng
 
-- Mở yêu cầu thay người từ assignment bị hủy/no-show.
-- Chọn worker thay thế.
-- Tạo assignment mới với `replacementForAssignmentId`.
-- Đóng request khi assignment thay thế được tạo.
+- Tổng tiền thu khách hàng.
+- Tổng tiền trả Worker.
+- Payment failure rate.
+- Payout SLA.
+- Settlement variance.
+- Complaint/Dispute rate.
+- Chứng nhận sắp hết hạn.
 
-### 3. Dispute / Refund adjustment
+### Risk indicators
 
-- Mở support case loại `COMPLAINT` hoặc `DISPUTE`.
-- Ghi timeline xử lý.
-- Phê duyệt adjustment.
-- Sinh payment mới loại `CUSTOMER_REFUND` hoặc `WORKER_ADJUSTMENT`.
-- Không sửa/xóa payment cũ.
+- Worker cancellation rate cao.
+- Worker on-time rate thấp.
+- Payment thất bại.
+- Job thiếu nhân sự gần giờ bắt đầu.
+- Certificate hết hạn trong 30 ngày.
+- Support Case CRITICAL chưa xử lý.
 
-### 4. Operations Web
+### Operations Web
 
-- Exception Overview trong Job Detail.
-- Form đánh giá hủy.
-- Danh sách replacement requests.
-- Danh sách dispute cases và refund adjustments.
+- Dashboard KPI thực.
+- Bộ lọc thời gian.
+- Risk Alert panel.
+- Báo cáo chi tiết.
+- Export CSV.
 
 ## Áp dụng
 
 ```powershell
 cd D:\Source\Git\WorkLink
-node scripts/apply-baseline-08.mjs
+node scripts/apply-baseline-10.mjs
 
-pnpm --filter @worklink/api db:migrate
 pnpm --filter @worklink/api typecheck
 pnpm --filter @worklink/api build
 
 pnpm --filter @worklink/operations-web typecheck
 pnpm --filter @worklink/operations-web build
 ```
+
+Không có migration mới. Baseline này chỉ đọc và tổng hợp dữ liệu nghiệp vụ hiện có.
