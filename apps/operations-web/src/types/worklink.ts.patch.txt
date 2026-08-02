@@ -1,0 +1,12 @@
+Bổ sung interface sau vào cuối file:
+
+export interface JobDetailResponse {
+  job: Job;
+  category?: Record<string, unknown>;
+  customer?: Record<string, unknown>;
+  location?: Record<string, unknown>;
+  requirements?: Array<Record<string, unknown>>;
+  quotes?: Array<Record<string, unknown>>;
+  verificationNotes?: Array<Record<string, unknown>>;
+  statusHistory?: Array<Record<string, unknown>>;
+}

@@ -52,3 +52,17 @@ Operations Web đã triển khai:
 - Operations Web hiển thị relationship và Re-hire history.
 
 Baseline 07 chuyển sang trạng thái IMPLEMENTED — chờ UAT end-to-end.
+
+
+## 2026-08-02 — Baseline 08
+
+Đã triển khai nhóm ngoại lệ:
+
+- Cancellation/no-show policy CANCELLATION_V1.
+- Customer fee và worker compensation.
+- Replacement request và assignment thay thế.
+- Complaint/dispute timeline.
+- Financial adjustment sinh payment mới.
+- Operations Web exception overview.
+
+Baseline 08 ở trạng thái IMPLEMENTED — chờ UAT.

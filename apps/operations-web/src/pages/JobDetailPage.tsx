@@ -13,6 +13,7 @@ import {
 } from '../components/AsyncState';
 import { StatusBadge } from '../components/StatusBadge';
 import { QualityOverviewPanel } from '../features/quality/QualityOverviewPanel';
+import { ExceptionOverviewPanel } from '../features/exceptions/ExceptionOverviewPanel';
 import { RehireForm } from '../features/quality/RehireForm';
 import { RelationshipPanel } from '../features/quality/RelationshipPanel';
 import { ReviewModerationPanel } from '../features/quality/ReviewModerationPanel';
@@ -207,6 +208,21 @@ export function JobDetailPage() {
             </div>
           </div>
           <QualityOverviewPanel jobId={jobId} />
+        </section>
+
+        <section className="content-card full-width">
+          <div className="section-heading">
+            <div>
+              <h2>Ngoại lệ và tranh chấp</h2>
+              <p>
+                Hủy/no-show, thay người, khiếu nại và điều chỉnh tài chính.
+              </p>
+            </div>
+          </div>
+          <ExceptionOverviewPanel
+            jobId={jobId}
+            assignments={assignments}
+          />
         </section>
 
         <section className="content-card full-width">

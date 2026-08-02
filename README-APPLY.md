@@ -1,44 +1,47 @@
-# WorkLink Baseline 07.2 — Relationship Matching & Quality UI
+# WorkLink Baseline 08 — Exceptions, Replacement & Disputes
 
 ## Phạm vi
 
-### Backend
+### 1. Cancellation / No-show assessment
 
-- Quan hệ `BLOCKED` là hard filter trong Matching.
-- Quan hệ `PREFERRED` cộng tối đa 5 điểm.
-- Lưu rule version `RELATIONSHIP_V1`.
-- API đọc metric snapshot theo Review.
-- API tổng quan chất lượng theo Job.
-- API đọc lịch sử Re-hire đã có được đưa lên Operations Web.
+- Đánh giá theo số phút còn lại trước giờ bắt đầu.
+- Lưu policy version.
+- Tính phí khách hàng, bồi thường worker và phí nền tảng.
+- Không ghi đè payment gốc.
+- Có audit log.
 
-### Operations Web
+### 2. Replacement workflow
 
-- Review moderation.
-- Metric trước/sau.
-- Danh sách quan hệ hiện tại.
-- Lịch sử Re-hire.
-- Hiển thị rule Matching.
+- Mở yêu cầu thay người từ assignment bị hủy/no-show.
+- Chọn worker thay thế.
+- Tạo assignment mới với `replacementForAssignmentId`.
+- Đóng request khi assignment thay thế được tạo.
 
-## Cách áp dụng
+### 3. Dispute / Refund adjustment
 
-Giải nén vào thư mục gốc WorkLink.
+- Mở support case loại `COMPLAINT` hoặc `DISPUTE`.
+- Ghi timeline xử lý.
+- Phê duyệt adjustment.
+- Sinh payment mới loại `CUSTOMER_REFUND` hoặc `WORKER_ADJUSTMENT`.
+- Không sửa/xóa payment cũ.
 
-Chạy script patch một lần:
+### 4. Operations Web
+
+- Exception Overview trong Job Detail.
+- Form đánh giá hủy.
+- Danh sách replacement requests.
+- Danh sách dispute cases và refund adjustments.
+
+## Áp dụng
 
 ```powershell
 cd D:\Source\Git\WorkLink
-node scripts/apply-baseline-07-2.mjs
-```
+node scripts/apply-baseline-08.mjs
 
-Sau đó:
-
-```powershell
+pnpm --filter @worklink/api db:migrate
 pnpm --filter @worklink/api typecheck
 pnpm --filter @worklink/api build
 
 pnpm --filter @worklink/operations-web typecheck
 pnpm --filter @worklink/operations-web build
 ```
-
-Script sẽ dừng nếu không tìm thấy đúng đoạn source cần patch. Khi đó không có
-file nào bị sửa một phần.

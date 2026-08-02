@@ -100,3 +100,49 @@
 - [x] Matching rule display.
 - [ ] UAT moderation ghi Audit Log.
 - [ ] UAT snapshot hiển thị đúng.
+
+
+## Baseline 08 — Exceptions, Replacement & Disputes
+
+### Cancellation / No-show
+
+- [x] Policy version CANCELLATION_V1.
+- [x] Tính theo thời gian trước giờ bắt đầu.
+- [x] Customer cancellation fee.
+- [x] Worker compensation.
+- [x] Platform fee.
+- [x] Approval trước khi sinh payment.
+- [x] Không sửa payment gốc.
+- [ ] UAT các mốc 24h, 4h, 1h và dưới 1h.
+
+### Replacement
+
+- [x] Mở replacement request.
+- [x] Chỉ từ assignment no-show/cancelled/replacement-required.
+- [x] Chọn worker mới.
+- [x] Chặn worker trùng Job.
+- [x] Tạo assignment mới.
+- [x] Liên kết replacementForAssignmentId.
+- [ ] UAT assignment thay thế.
+
+### Dispute / Adjustment
+
+- [x] Mở complaint/dispute.
+- [x] Timeline sự kiện.
+- [x] Evidence.
+- [x] Update trạng thái.
+- [x] Propose financial adjustment.
+- [x] Approve adjustment.
+- [x] Sinh payment mới.
+- [x] Không xóa payment cũ.
+- [ ] UAT refund/adjustment end-to-end.
+
+### Operations Web
+
+- [x] Exception overview.
+- [x] Cancellation assessment action.
+- [x] Replacement request action.
+- [x] Danh sách dispute và adjustment.
+- [ ] Form mở dispute đầy đủ.
+- [ ] Form fulfill replacement.
+- [ ] Form approve adjustment.

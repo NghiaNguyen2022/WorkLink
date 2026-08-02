@@ -6,6 +6,7 @@ import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { ExecutionModule } from './modules/execution/execution.module';
+import { ExceptionsModule } from './modules/exceptions/exceptions.module';
 import { FinanceModule } from './modules/finance/finance.module';
 import { HealthModule } from './modules/health/health.module';
 import { JobsModule } from './modules/jobs/jobs.module';
@@ -30,6 +31,7 @@ import { WorkersModule } from './modules/workers/workers.module';
     JobsModule,
     MatchingModule,
     ExecutionModule,
+    ExceptionsModule,
     FinanceModule,
     QualityModule,
   ],
