@@ -12,8 +12,10 @@ import {
   LoadingState,
 } from '../components/AsyncState';
 import { StatusBadge } from '../components/StatusBadge';
+import { QualityOverviewPanel } from '../features/quality/QualityOverviewPanel';
 import { RehireForm } from '../features/quality/RehireForm';
 import { RelationshipPanel } from '../features/quality/RelationshipPanel';
+import { ReviewModerationPanel } from '../features/quality/ReviewModerationPanel';
 import { ReviewForm } from '../features/quality/ReviewForm';
 import { jobsApi } from '../services/jobs';
 
@@ -178,6 +180,33 @@ export function JobDetailPage() {
               </p>
             )}
           </div>
+        </section>
+
+        <section className="content-card">
+          <div className="section-heading">
+            <div>
+              <h2>Moderation</h2>
+              <p>
+                Thay đổi trạng thái Review có lý do và Audit Log.
+              </p>
+            </div>
+          </div>
+          <ReviewModerationPanel
+            jobId={jobId}
+            reviews={reviewsQuery.data ?? []}
+          />
+        </section>
+
+        <section className="content-card">
+          <div className="section-heading">
+            <div>
+              <h2>Quality Overview</h2>
+              <p>
+                Metric snapshot, relationship rule và lịch sử thuê lại.
+              </p>
+            </div>
+          </div>
+          <QualityOverviewPanel jobId={jobId} />
         </section>
 
         <section className="content-card full-width">

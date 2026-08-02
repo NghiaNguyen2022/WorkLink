@@ -1,34 +1,44 @@
-# WorkLink Baseline 07.1 — Operations Web Build Fix
+# WorkLink Baseline 07.2 — Relationship Matching & Quality UI
 
-## Sửa lỗi
+## Phạm vi
 
-### TS2339
+### Backend
 
-```text
-Property 'env' does not exist on type 'ImportMeta'
-```
+- Quan hệ `BLOCKED` là hard filter trong Matching.
+- Quan hệ `PREFERRED` cộng tối đa 5 điểm.
+- Lưu rule version `RELATIONSHIP_V1`.
+- API đọc metric snapshot theo Review.
+- API tổng quan chất lượng theo Job.
+- API đọc lịch sử Re-hire đã có được đưa lên Operations Web.
 
-Bổ sung:
+### Operations Web
 
-```text
-apps/operations-web/src/vite-env.d.ts
-```
+- Review moderation.
+- Metric trước/sau.
+- Danh sách quan hệ hiện tại.
+- Lịch sử Re-hire.
+- Hiển thị rule Matching.
 
-### TS5096
+## Cách áp dụng
 
-```text
-allowImportingTsExtensions can only be used when noEmit or emitDeclarationOnly is set
-```
+Giải nén vào thư mục gốc WorkLink.
 
-Thay `tsconfig.node.json` bằng cấu hình có `noEmit: true` và bỏ
-`allowImportingTsExtensions`.
-
-## Áp dụng
-
-Giải nén vào thư mục gốc WorkLink, sau đó chạy:
+Chạy script patch một lần:
 
 ```powershell
 cd D:\Source\Git\WorkLink
+node scripts/apply-baseline-07-2.mjs
+```
+
+Sau đó:
+
+```powershell
+pnpm --filter @worklink/api typecheck
+pnpm --filter @worklink/api build
+
 pnpm --filter @worklink/operations-web typecheck
 pnpm --filter @worklink/operations-web build
 ```
+
+Script sẽ dừng nếu không tìm thấy đúng đoạn source cần patch. Khi đó không có
+file nào bị sửa một phần.

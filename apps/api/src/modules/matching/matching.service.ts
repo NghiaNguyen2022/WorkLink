@@ -23,6 +23,7 @@ import {
       jobRequirements,
       jobs,
       matchingRuns,
+      relationshipPreferences,
       users,
       workerAvailability,
       workerProfiles,
@@ -98,6 +99,43 @@ export class MatchingService {
                         .where(inArray(workerAvailability.workerId, workerIds))
                   : [];
 
+            const relationships = workerIds.length
+                  ? await this.database.db
+                        .select()
+                        .from(relationshipPreferences)
+                        .where(
+                              and(
+                                    eq(
+                                          relationshipPreferences.customerId,
+                                          job.customerId,
+                                    ),
+                                    inArray(
+                                          relationshipPreferences.workerId,
+                                          workerIds,
+                                    ),
+                                    eq(relationshipPreferences.active, 1),
+                              ),
+                        )
+                  : [];
+
+            const blockedWorkerIds = new Set(
+                  relationships
+                        .filter(
+                              (item) =>
+                                    item.preferenceType === 'BLOCKED',
+                        )
+                        .map((item) => item.workerId),
+            );
+
+            const preferredWorkerIds = new Set(
+                  relationships
+                        .filter(
+                              (item) =>
+                                    item.preferenceType === 'PREFERRED',
+                        )
+                        .map((item) => item.workerId),
+            );
+
             const activeAssignments = workerIds.length
                   ? await this.database.db
                         .select({
@@ -133,6 +171,10 @@ export class MatchingService {
                   (job.workerPayoutAmount ?? 0) / job.headcount;
 
             const candidates = workers
+                  .filter(
+                        ({ profile }) =>
+                              !blockedWorkerIds.has(profile.id),
+                  )
                   .map(({ profile, user }) => {
                         const workerSkillsForProfile = skills.filter(
                               (item) => item.workerId === profile.id,
@@ -181,6 +223,16 @@ export class MatchingService {
                               durationHours,
                         });
 
+                        const relationshipBonus =
+                              preferredWorkerIds.has(profile.id)
+                                    ? 5
+                                    : 0;
+
+                        const totalScore = Math.min(
+                              100,
+                              score.totalScore + relationshipBonus,
+                        );
+
                         return {
                               workerId: profile.id,
                               workerUserId: profile.userId,
@@ -188,6 +240,17 @@ export class MatchingService {
                               phone: user.phone,
                               proposedPayout: payoutPerWorker,
                               ...score,
+                              totalScore,
+                              scoreBreakdown: {
+                                    ...score.scoreBreakdown,
+                                    relationshipBonus,
+                              },
+                              reasons: relationshipBonus
+                                    ? [
+                                          ...score.reasons,
+                                          'Quan hệ ưu tiên với khách hàng',
+                                    ]
+                                    : score.reasons,
                         };
                   })
                   .filter(
@@ -212,6 +275,11 @@ export class MatchingService {
                               limit: input.limit ?? 20,
                               payoutPerWorker,
                               durationHours,
+                              relationshipRuleVersion:
+                                    'RELATIONSHIP_V1',
+                              blockedWorkers:
+                                    blockedWorkerIds.size,
+                              preferredBonus: 5,
                         },
                         createdByUserId: input.actorUserId,
                         completedAt: new Date(),

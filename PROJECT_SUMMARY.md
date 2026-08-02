@@ -38,3 +38,17 @@ Operations Web đã triển khai:
 2. Tích hợp BLOCKED và PREFERRED vào Matching.
 3. Dựng customer self-service trong `customer-web`.
 4. Dựng worker review trong `mobile-app`.
+
+
+## 2026-08-02 — Baseline 07.2
+
+Đã hoàn tất phần tích hợp còn lại của nhóm chất lượng:
+
+- BLOCKED được đưa vào hard filter của Matching.
+- PREFERRED được cộng tối đa 5 điểm.
+- Matching rule được version hóa bằng RELATIONSHIP_V1.
+- Operations Web có Review moderation.
+- Operations Web hiển thị metric snapshot trước/sau.
+- Operations Web hiển thị relationship và Re-hire history.
+
+Baseline 07 chuyển sang trạng thái IMPLEMENTED — chờ UAT end-to-end.

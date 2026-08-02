@@ -2,6 +2,7 @@ import { apiRequest } from '../lib/api';
 import type {
   Job,
   JobExecutionResponse,
+  JobQualityOverview,
   Relationship,
   Review,
 } from '../types/worklink';
@@ -55,6 +56,28 @@ export const jobsApi = {
       method: 'PUT',
       body: JSON.stringify(body),
     }),
+
+  moderateReview: (
+    reviewId: string,
+    body: {
+      actorUserId: string;
+      status: 'PUBLISHED' | 'FLAGGED' | 'HIDDEN';
+      reason: string;
+    },
+  ) =>
+    apiRequest<{
+      reviewId: string;
+      previousStatus: string;
+      status: string;
+    }>(`/reviews/${reviewId}/moderate`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+
+  qualityOverview: (jobId: string) =>
+    apiRequest<JobQualityOverview>(
+      `/jobs/${jobId}/quality-overview`,
+    ),
 
   rehire: (
     jobId: string,

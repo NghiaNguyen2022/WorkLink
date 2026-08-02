@@ -54,3 +54,40 @@ export interface Relationship {
   preferenceType: 'PREFERRED' | 'BLOCKED' | 'NEUTRAL';
   reason?: string | null;
 }
+
+
+export interface ReviewMetricUpdate {
+  id: string;
+  reviewId: string;
+  targetType: string;
+  targetId: string;
+  scoringVersion: string;
+  beforeSnapshot?: Record<string, unknown> | null;
+  afterSnapshot?: Record<string, unknown> | null;
+  processedAt: string;
+}
+
+export interface RehireLink {
+  id: string;
+  sourceJobId: string;
+  newJobId: string;
+  preferredWorkerId?: string | null;
+  requestedByUserId: string;
+  inheritedFields?: string[] | null;
+  createdAt: string;
+}
+
+export interface JobQualityOverview {
+  jobId: string;
+  matchingRule: {
+    version: string;
+    blocked: string;
+    preferredBonus: number;
+    maximumScore: number;
+  };
+  reviews: Review[];
+  metricUpdates: ReviewMetricUpdate[];
+  relationships: Relationship[];
+  customerMetric?: Record<string, unknown> | null;
+  rehires: RehireLink[];
+}

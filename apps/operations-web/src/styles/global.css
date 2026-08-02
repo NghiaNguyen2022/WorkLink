@@ -635,3 +635,98 @@ textarea:focus {
     display: grid;
   }
 }
+
+
+.quality-overview {
+  display: grid;
+  gap: 22px;
+}
+
+.quality-rule-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.quality-rule-grid > div {
+  border: 1px solid #e2e8e2;
+  border-radius: 14px;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 3px 8px;
+}
+
+.quality-rule-grid svg {
+  color: #0f6a63;
+  grid-row: span 2;
+}
+
+.quality-rule-grid span {
+  color: #74807d;
+  font-size: 12px;
+}
+
+.quality-columns {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 18px;
+}
+
+.snapshot-list,
+.relationship-list,
+.rehire-list {
+  display: grid;
+  gap: 10px;
+}
+
+.snapshot-card,
+.relationship-card,
+.rehire-card {
+  border: 1px solid #e2e8e2;
+  border-radius: 13px;
+  padding: 14px;
+}
+
+.snapshot-card > div:first-child,
+.rehire-card > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.snapshot-card span,
+.relationship-card span,
+.rehire-card span {
+  color: #74807d;
+  font-size: 12px;
+}
+
+.snapshot-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.snapshot-columns pre {
+  overflow: auto;
+  margin: 0;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f5f7f4;
+  font-size: 11px;
+}
+
+.relationship-card p {
+  margin: 7px 0 0;
+  color: #56625f;
+}
+
+@media (max-width: 900px) {
+  .quality-rule-grid,
+  .quality-columns,
+  .snapshot-columns {
+    grid-template-columns: 1fr;
+  }
+}

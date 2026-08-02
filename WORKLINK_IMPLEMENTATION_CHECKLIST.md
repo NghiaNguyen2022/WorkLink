@@ -71,3 +71,32 @@
 - [ ] Preferred/Blocked thành công.
 - [ ] Re-hire tạo Job DRAFT.
 - [ ] Không còn thư mục `apps/web`.
+
+
+## Baseline 07.2 — Relationship Matching & Quality UI
+
+### Matching
+
+- [x] BLOCKED là hard filter.
+- [x] BLOCKED từ một trong hai phía đều loại Worker.
+- [x] PREFERRED cộng tối đa 5 điểm.
+- [x] Tổng điểm sau bonus không vượt 100.
+- [x] Score breakdown có relationshipBonus.
+- [x] Reasons ghi nhận quan hệ ưu tiên.
+- [x] Matching run lưu rule version RELATIONSHIP_V1.
+- [ ] UAT Worker BLOCKED không xuất hiện.
+- [ ] UAT Worker PREFERRED được cộng đúng 5 điểm.
+- [ ] UAT hard filters vẫn ưu tiên hơn bonus.
+
+### Quality Operations UI
+
+- [x] Review moderation UI.
+- [x] Publish, Flag và Hide.
+- [x] Bắt buộc nhập actor và lý do phía API.
+- [x] Quality overview API.
+- [x] Metric before/after.
+- [x] Relationship list.
+- [x] Re-hire history.
+- [x] Matching rule display.
+- [ ] UAT moderation ghi Audit Log.
+- [ ] UAT snapshot hiển thị đúng.
