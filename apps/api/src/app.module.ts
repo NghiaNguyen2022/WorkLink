@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { HealthModule } from './modules/health/health.module';
 import { JobsModule } from './modules/jobs/jobs.module';
+import { MatchingModule } from './modules/matching/matching.module';
 import { UsersModule } from './modules/users/users.module';
 import { WorkersModule } from './modules/workers/workers.module';
 
@@ -17,15 +18,14 @@ import { WorkersModule } from './modules/workers/workers.module';
       envFilePath: '../../.env',
       validationSchema: envValidationSchema,
     }),
-
     DatabaseModule,
-
     HealthModule,
     UsersModule,
     AuthModule,
     CustomersModule,
     WorkersModule,
     JobsModule,
+    MatchingModule,
   ],
 })
 export class AppModule {}

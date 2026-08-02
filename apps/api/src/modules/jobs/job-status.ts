@@ -6,6 +6,7 @@ export const JOB_STATUSES = {
   PRICED: 'PRICED',
   PENDING_CUSTOMER_APPROVAL: 'PENDING_CUSTOMER_APPROVAL',
   MATCHING: 'MATCHING',
+  ASSIGNED: 'ASSIGNED',
   CANCELLED: 'CANCELLED',
 } as const;
 
@@ -13,10 +14,7 @@ export type JobStatus =
   (typeof JOB_STATUSES)[keyof typeof JOB_STATUSES];
 
 const transitions: Record<JobStatus, readonly JobStatus[]> = {
-  DRAFT: [
-    JOB_STATUSES.PENDING_VERIFICATION,
-    JOB_STATUSES.CANCELLED,
-  ],
+  DRAFT: [JOB_STATUSES.PENDING_VERIFICATION, JOB_STATUSES.CANCELLED],
   PENDING_VERIFICATION: [
     JOB_STATUSES.PENDING_INFORMATION,
     JOB_STATUSES.VERIFIED,
@@ -27,10 +25,7 @@ const transitions: Record<JobStatus, readonly JobStatus[]> = {
     JOB_STATUSES.VERIFIED,
     JOB_STATUSES.CANCELLED,
   ],
-  VERIFIED: [
-    JOB_STATUSES.PRICED,
-    JOB_STATUSES.CANCELLED,
-  ],
+  VERIFIED: [JOB_STATUSES.PRICED, JOB_STATUSES.CANCELLED],
   PRICED: [
     JOB_STATUSES.PENDING_CUSTOMER_APPROVAL,
     JOB_STATUSES.CANCELLED,
@@ -40,7 +35,8 @@ const transitions: Record<JobStatus, readonly JobStatus[]> = {
     JOB_STATUSES.PRICED,
     JOB_STATUSES.CANCELLED,
   ],
-  MATCHING: [],
+  MATCHING: [JOB_STATUSES.ASSIGNED, JOB_STATUSES.CANCELLED],
+  ASSIGNED: [],
   CANCELLED: [],
 };
 
@@ -48,7 +44,5 @@ export function canTransition(
   fromStatus: string,
   toStatus: JobStatus,
 ): boolean {
-  const allowed = transitions[fromStatus as JobStatus];
-
-  return allowed?.includes(toStatus) ?? false;
+  return transitions[fromStatus as JobStatus]?.includes(toStatus) ?? false;
 }
