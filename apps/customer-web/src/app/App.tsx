@@ -9,12 +9,17 @@ import { CreateJobPage } from '../pages/CreateJobPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { JobDetailPage } from '../pages/JobDetailPage';
 import { JobsPage } from '../pages/JobsPage';
-import { SessionPage } from '../pages/SessionPage';
+import { LoginPage } from '../pages/LoginPage';
+import { RegisterPage } from '../pages/RegisterPage';
 
 export function App() {
   return (
     <Routes>
-      <Route path="/session" element={<SessionPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/register"
+        element={<RegisterPage />}
+      />
       <Route element={<CustomerLayout />}>
         <Route
           index

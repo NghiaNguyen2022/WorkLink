@@ -4,10 +4,13 @@ import {
   ChevronRight,
   FileChartColumnIncreasing,
   LayoutDashboard,
+  LogOut,
   Settings,
   Users,
 } from 'lucide-react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
+
+import { useOperatorSession } from '../session/OperatorSession';
 
 const navItems = [
   { to: '/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
@@ -24,6 +27,12 @@ const navItems = [
 
 export function AppLayout() {
   const location = useLocation();
+  const session = useOperatorSession();
+
+  if (!session.configured) {
+    return <Navigate to="/login" replace />;
+  }
+
   const pageLabel =
     location.pathname.startsWith('/jobs')
       ? 'Công việc'
@@ -74,11 +83,23 @@ export function AppLayout() {
         </nav>
 
         <div className="sidebar-footer">
-          <div className="avatar">NN</div>
-          <div>
-            <strong>Điều phối viên</strong>
-            <span>Operations</span>
+          <div className="avatar">
+            {(session.fullName || session.email)
+              .slice(0, 2)
+              .toUpperCase()}
           </div>
+          <div>
+            <strong>{session.fullName || session.email}</strong>
+            <span>{session.role}</span>
+          </div>
+          <button
+            type="button"
+            className="logout-button"
+            onClick={session.logout}
+            title="Đăng xuất"
+          >
+            <LogOut size={16} />
+          </button>
         </div>
       </aside>
 

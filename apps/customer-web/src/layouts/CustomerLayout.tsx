@@ -16,7 +16,7 @@ export function CustomerLayout() {
   const session = useCustomerSession();
 
   if (!session.configured) {
-    return <Navigate to="/session" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (
@@ -48,10 +48,10 @@ export function CustomerLayout() {
         <button
           type="button"
           className="logout-button"
-          onClick={session.clear}
+          onClick={session.logout}
         >
           <LogOut size={17} />
-          Đổi tài khoản UAT
+          Đăng xuất
         </button>
       </aside>
 
@@ -59,7 +59,7 @@ export function CustomerLayout() {
         <header className="customer-topbar">
           <div>
             <strong>Cổng dành cho người thuê</strong>
-            <span>{session.customerId}</span>
+            <span>{session.fullName || session.email}</span>
           </div>
         </header>
         <div className="customer-page">

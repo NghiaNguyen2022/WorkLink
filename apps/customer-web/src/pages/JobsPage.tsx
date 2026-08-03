@@ -10,10 +10,7 @@ export function JobsPage() {
   const query = useQuery({
     queryKey: ['customer-jobs', session.customerId],
     queryFn: () =>
-      customerPortalApi.jobs(
-        session.customerId,
-        session.customerUserId,
-      ),
+      customerPortalApi.jobs(session.customerId),
   });
 
   return (

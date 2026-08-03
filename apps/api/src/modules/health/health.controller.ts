@@ -5,6 +5,7 @@ import {
 } from '@nestjs/swagger';
 
 import { DatabaseService } from '../../database/database.service';
+import { Public } from '../auth/decorators/public.decorator';
 
 @ApiTags('Health')
 @Controller('health')
@@ -13,6 +14,7 @@ export class HealthController {
     private readonly database: DatabaseService,
   ) {}
 
+  @Public()
   @Get()
   @ApiOperation({
     summary: 'Kiểm tra trạng thái API và cơ sở dữ liệu',

@@ -25,7 +25,6 @@ export function JobDetailPage() {
     queryFn: () =>
       customerPortalApi.detail(
         session.customerId,
-        session.customerUserId,
         jobId,
       ),
   });
@@ -113,10 +112,7 @@ export function JobDetailPage() {
               onClick={() =>
                 action.mutate({
                   path: 'submit',
-                  body: {
-                    customerUserId:
-                      session.customerUserId,
-                  },
+                  body: {},
                 })
               }
             >
@@ -154,8 +150,6 @@ export function JobDetailPage() {
                       action.mutate({
                         path: 'approve-quote',
                         body: {
-                          customerUserId:
-                            session.customerUserId,
                           quoteId: quote.id,
                         },
                       })
@@ -215,8 +209,6 @@ export function JobDetailPage() {
                       action.mutate({
                         path: `assignments/${item.assignment.id}/confirm`,
                         body: {
-                          customerUserId:
-                            session.customerUserId,
                           note: 'Xác nhận từ Customer Portal',
                         },
                       })
@@ -266,8 +258,6 @@ export function JobDetailPage() {
                           action.mutate({
                             path: 'reviews',
                             body: {
-                              customerUserId:
-                                session.customerUserId,
                               assignmentId:
                                 item.assignment.id,
                               overallRating: rating,
@@ -290,8 +280,6 @@ export function JobDetailPage() {
                           action.mutate({
                             path: 'relationships',
                             body: {
-                              customerUserId:
-                                session.customerUserId,
                               workerId:
                                 item.assignment.workerId,
                               preferenceType:
@@ -365,8 +353,6 @@ export function JobDetailPage() {
                 action.mutate({
                   path: 're-hire',
                   body: {
-                    customerUserId:
-                      session.customerUserId,
                     startAt: new Date(
                       rehireStart,
                     ).toISOString(),
@@ -403,8 +389,6 @@ export function JobDetailPage() {
                 action.mutate({
                   path: 'complaints',
                   body: {
-                    customerUserId:
-                      session.customerUserId,
                     caseType: 'COMPLAINT',
                     priority: 'NORMAL',
                     subject: `Khiếu nại ${job.jobCode}`,

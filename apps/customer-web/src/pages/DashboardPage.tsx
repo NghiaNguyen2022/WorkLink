@@ -19,10 +19,7 @@ export function DashboardPage() {
       session.customerId,
     ],
     queryFn: () =>
-      customerPortalApi.dashboard(
-        session.customerId,
-        session.customerUserId,
-      ),
+      customerPortalApi.dashboard(session.customerId),
   });
 
   if (query.isLoading) {

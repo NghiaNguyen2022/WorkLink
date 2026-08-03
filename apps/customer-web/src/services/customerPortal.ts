@@ -6,31 +6,21 @@ import type {
 } from '../types/customer';
 
 export const customerPortalApi = {
-  dashboard(
-    customerId: string,
-    customerUserId: string,
-  ) {
+  dashboard(customerId: string) {
     return apiRequest<CustomerDashboard>(
-      `/customer-portal/customers/${customerId}/dashboard?customerUserId=${customerUserId}`,
+      `/customer-portal/customers/${customerId}/dashboard`,
     );
   },
 
-  jobs(
-    customerId: string,
-    customerUserId: string,
-  ) {
+  jobs(customerId: string) {
     return apiRequest<Job[]>(
-      `/customer-portal/customers/${customerId}/jobs?customerUserId=${customerUserId}`,
+      `/customer-portal/customers/${customerId}/jobs`,
     );
   },
 
-  detail(
-    customerId: string,
-    customerUserId: string,
-    jobId: string,
-  ) {
+  detail(customerId: string, jobId: string) {
     return apiRequest<CustomerJobDetail>(
-      `/customer-portal/customers/${customerId}/jobs/${jobId}?customerUserId=${customerUserId}`,
+      `/customer-portal/customers/${customerId}/jobs/${jobId}`,
     );
   },
 

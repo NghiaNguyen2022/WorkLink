@@ -23,7 +23,6 @@ export function CreateJobPage() {
       customerPortalApi.createJob(
         session.customerId,
         {
-          customerUserId: session.customerUserId,
           categoryId,
           locationId,
           title,

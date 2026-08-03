@@ -38,8 +38,8 @@
 - [x] Re-hire form.
 - [x] Loading/error/empty state.
 - [x] Responsive UI.
-- [ ] Authentication context.
-- [ ] RBAC.
+- [x] Authentication context (Baseline 12).
+- [ ] RBAC theo vai trò trên UI (route-level, chưa phân trang theo role).
 - [ ] Review moderation UI.
 - [ ] Metric before/after card.
 - [ ] Relationship oversight list.
@@ -209,7 +209,7 @@
 
 ## Chưa hoàn tất/UAT
 
-- [ ] JWT Authentication.
+- [x] JWT Authentication (Baseline 12).
 - [ ] Customer Profile UI.
 - [ ] Location Management UI.
 - [ ] Category picker thay cho nhập ID.
@@ -228,5 +228,46 @@
 - [x] Lưu acceptedByUserId.
 - [x] Customer Web hiển thị quoteStatus.
 - [x] Customer Web hiển thị customerTotal.
-- [ ] Chạy lại API typecheck.
-- [ ] Chạy lại Customer Web typecheck.
+- [x] Chạy lại API typecheck.
+- [x] Chạy lại Customer Web typecheck.
+
+## Baseline 12 — Auth/RBAC Foundation
+
+### Phát hiện
+
+- [x] Xác định JWT được cấp nhưng không được xác thực ở bất kỳ route nào.
+- [x] Xác định `customer-portal` nhận `customerId`/`customerUserId` từ client, không xác minh danh tính.
+
+### Backend
+
+- [x] Chuẩn hóa `AppRole` trong `packages/auth` (9 vai trò, khớp `docs/security/access-control.md`).
+- [x] `JwtAuthGuard` + `RolesGuard` đăng ký toàn cục qua `APP_GUARD`.
+- [x] `@Public()` decorator cho auth/login, auth/register, health.
+- [x] `@Roles()` decorator + `@CurrentUser()` decorator.
+- [x] `POST auth/register` (CUSTOMER/WORKER), tự tạo customer/worker profile, trả về `profileId`.
+- [x] `customer-portal`: customerUserId lấy từ JWT, không còn nhận từ client.
+- [x] `customer-portal`: sai chủ sở hữu customerId trả về 403 (ForbiddenException).
+- [x] Toàn bộ endpoint khác mặc định yêu cầu JWT hợp lệ.
+
+### Frontend
+
+- [x] `customer-web`: đăng nhập/đăng ký thật, bỏ nhập Customer ID/User ID thủ công.
+- [x] `customer-web`: `lib/api.ts` gắn Authorization header, tự đăng xuất khi 401.
+- [x] `operations-web`: thêm trang đăng nhập + `OperatorSessionProvider` (trước đây chưa có).
+- [x] `operations-web`: `lib/api.ts` gắn Authorization header, tự đăng xuất khi 401.
+
+### Verify
+
+- [x] `pnpm --filter @worklink/api typecheck` + `build`.
+- [x] `pnpm --filter @worklink/customer-web typecheck`.
+- [x] `pnpm --filter @worklink/operations-web typecheck`.
+- [x] Smoke test với DB thật: không token → 401; đúng khách hàng → 200; sai customerId → 403; sai vai trò → 403; đăng ký mới → JWT + profileId hợp lệ.
+- [ ] UAT đăng nhập/đăng ký trên trình duyệt thật.
+- [ ] Phân quyền chi tiết theo vai trò cho từng endpoint Operations (mới có yêu cầu "đã đăng nhập", chưa gắn `@Roles()` theo từng nghiệp vụ).
+
+## Baseline 13 — Kế hoạch song song tiếp theo (theo BPRD §19.2)
+
+- [ ] Track A: Worker Portal API (`apps/api/src/modules/worker-portal`) + Worker Mobile App (Expo/React Native).
+- [ ] Track B: Operations Web — form mở dispute, fulfill replacement, approve adjustment; `@Roles()` theo từng endpoint.
+- [ ] Track C: Customer Web — Profile UI, Location management UI, category/location picker, dispute detail/status.
+- [ ] Track D (sau): Public Website (Next.js), theo giai đoạn Pilot của BPRD.

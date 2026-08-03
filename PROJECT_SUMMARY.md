@@ -96,3 +96,45 @@ Baseline 10 ở trạng thái IMPLEMENTED — chờ UAT.
 - React/Vite Customer Web tại port 5175.
 
 Baseline 11 ở trạng thái IMPLEMENTED — chờ UAT và JWT/RBAC.
+
+## 2026-08-03 — Baseline 12: Auth/RBAC Foundation
+
+Đã phát hiện và khắc phục lỗ hổng nghiêm trọng: API cấp JWT khi đăng
+nhập nhưng không có guard nào kiểm tra token, và `customer-portal` nhận
+`customerId`/`customerUserId` trực tiếp từ client — cho phép giả mạo
+danh tính khách hàng bất kỳ.
+
+Backend:
+
+- `packages/auth`: chuẩn hóa `AppRole` (9 vai trò, khớp
+  `docs/security/access-control.md`), `AuthUser`, `JwtPayload`.
+- `JwtAuthGuard` + `RolesGuard` đăng ký toàn cục (`APP_GUARD`) trong
+  `AuthModule`, có `@Public()` cho `auth/login`, `auth/register`,
+  `health`.
+- `POST auth/register` (CUSTOMER hoặc WORKER, tự tạo customer/worker
+  profile), phản hồi kèm `profileId`.
+- `customer-portal`: `customerUserId` không còn nhận từ client — lấy
+  từ JWT đã xác thực (`req.user`); sai chủ sở hữu `customerId` trả về
+  403 thay vì 400.
+- Toàn bộ endpoint khác (jobs, workers, matching, execution, finance,
+  quality, reporting, exceptions...) mặc định yêu cầu JWT hợp lệ.
+
+Frontend:
+
+- `customer-web`: đăng nhập/đăng ký thật (JWT), bỏ ô nhập
+  Customer ID/User ID thủ công; `customerId` lấy từ `profileId` sau
+  đăng nhập; `lib/api.ts` gắn `Authorization` header và tự đăng xuất
+  khi nhận 401.
+- `operations-web`: thêm trang đăng nhập + `OperatorSessionProvider`
+  (trước đây hoàn toàn chưa có auth); `lib/api.ts` gắn
+  `Authorization` header tương tự.
+
+Đã smoke test bằng curl với DB thật: không token → 401; token đúng
+khách hàng → 200; token đúng nhưng sai `customerId` → 403; token sai
+vai trò (WORKER gọi customer-portal) → 403; đăng ký mới → nhận JWT +
+`profileId` hợp lệ.
+
+Baseline 12 ở trạng thái IMPLEMENTED — chờ UAT. Các bước kế tiếp theo
+BPRD: song song hóa Track A (Worker Portal API + Worker Mobile App
+Expo), Track B (nốt 3 form Operations Web), Track C (profile/location
+picker cho Customer Web); Track D (Public Website) để sau.

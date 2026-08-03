@@ -15,9 +15,6 @@ import {
 
 export class CreateCustomerJobDto {
   @IsUUID()
-  customerUserId!: string;
-
-  @IsUUID()
   categoryId!: string;
 
   @IsUUID()
@@ -79,9 +76,6 @@ export class CreateCustomerJobDto {
 }
 
 export class CustomerActionDto {
-  @IsUUID()
-  customerUserId!: string;
-
   @IsOptional()
   @IsString()
   @MaxLength(1000)
@@ -94,9 +88,6 @@ export class ApproveQuoteDto extends CustomerActionDto {
 }
 
 export class CustomerReviewDto {
-  @IsUUID()
-  customerUserId!: string;
-
   @IsUUID()
   assignmentId!: string;
 
@@ -121,9 +112,6 @@ export class CustomerReviewDto {
 
 export class CustomerRelationshipDto {
   @IsUUID()
-  customerUserId!: string;
-
-  @IsUUID()
   workerId!: string;
 
   @IsString()
@@ -137,9 +125,6 @@ export class CustomerRelationshipDto {
 }
 
 export class CustomerRehireDto {
-  @IsUUID()
-  customerUserId!: string;
-
   @IsOptional()
   @IsUUID()
   preferredWorkerId?: string;
@@ -162,9 +147,6 @@ export class CustomerRehireDto {
 }
 
 export class CustomerComplaintDto {
-  @IsUUID()
-  customerUserId!: string;
-
   @IsString()
   @IsIn(['COMPLAINT', 'DISPUTE'])
   caseType!: string;

@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -231,12 +232,10 @@ export class CustomerPortalService {
 
   async createJob(
     customerId: string,
+    customerUserId: string,
     input: CreateCustomerJobDto,
   ) {
-    await this.assertCustomer(
-      customerId,
-      input.customerUserId,
-    );
+    await this.assertCustomer(customerId, customerUserId);
 
     const [location] = await this.database.db
       .select({ id: customerLocations.id })
@@ -305,22 +304,19 @@ export class CustomerPortalService {
       }
     });
 
-    return this.jobDetail(
-      customerId,
-      jobId,
-      input.customerUserId,
-    );
+    return this.jobDetail(customerId, jobId, customerUserId);
   }
 
   async submitJob(
     customerId: string,
     jobId: string,
-    input: CustomerActionDto,
+    customerUserId: string,
+    _input: CustomerActionDto,
   ) {
     const detail = await this.jobDetail(
       customerId,
       jobId,
-      input.customerUserId,
+      customerUserId,
     );
 
     if (detail.job.status !== 'DRAFT') {
@@ -334,22 +330,19 @@ export class CustomerPortalService {
       .set({ status: 'PENDING_VERIFICATION' })
       .where(eq(jobs.id, jobId));
 
-    return this.jobDetail(
-      customerId,
-      jobId,
-      input.customerUserId,
-    );
+    return this.jobDetail(customerId, jobId, customerUserId);
   }
 
   async approveQuote(
     customerId: string,
     jobId: string,
+    customerUserId: string,
     input: ApproveQuoteDto,
   ) {
     const detail = await this.jobDetail(
       customerId,
       jobId,
-      input.customerUserId,
+      customerUserId,
     );
 
     const quote = detail.quotes.find(
@@ -368,7 +361,7 @@ export class CustomerPortalService {
         .set({
           quoteStatus: 'ACCEPTED',
           acceptedAt: new Date(),
-          acceptedByUserId: input.customerUserId,
+          acceptedByUserId: customerUserId,
         })
         .where(eq(pricingQuotes.id, input.quoteId));
 
@@ -383,29 +376,22 @@ export class CustomerPortalService {
         .where(eq(jobs.id, jobId));
     });
 
-    return this.jobDetail(
-      customerId,
-      jobId,
-      input.customerUserId,
-    );
+    return this.jobDetail(customerId, jobId, customerUserId);
   }
 
   async confirmAssignment(
     customerId: string,
     jobId: string,
     assignmentId: string,
+    customerUserId: string,
     input: CustomerActionDto,
   ) {
-    await this.jobDetail(
-      customerId,
-      jobId,
-      input.customerUserId,
-    );
+    await this.jobDetail(customerId, jobId, customerUserId);
 
     return this.executionService.customerConfirm(
       assignmentId,
       {
-        customerUserId: input.customerUserId,
+        customerUserId,
         note: input.note,
       },
     );
@@ -414,16 +400,13 @@ export class CustomerPortalService {
   async reviewWorker(
     customerId: string,
     jobId: string,
+    customerUserId: string,
     input: CustomerReviewDto,
   ) {
-    await this.jobDetail(
-      customerId,
-      jobId,
-      input.customerUserId,
-    );
+    await this.jobDetail(customerId, jobId, customerUserId);
 
     return this.qualityService.createReview(jobId, {
-      reviewerUserId: input.customerUserId,
+      reviewerUserId: customerUserId,
       assignmentId: input.assignmentId,
       reviewerType: 'CUSTOMER_TO_WORKER',
       overallRating: input.overallRating,
@@ -436,18 +419,15 @@ export class CustomerPortalService {
   async setRelationship(
     customerId: string,
     jobId: string,
+    customerUserId: string,
     input: CustomerRelationshipDto,
   ) {
-    await this.jobDetail(
-      customerId,
-      jobId,
-      input.customerUserId,
-    );
+    await this.jobDetail(customerId, jobId, customerUserId);
 
     return this.qualityService.setRelationship({
       customerId,
       workerId: input.workerId,
-      actorUserId: input.customerUserId,
+      actorUserId: customerUserId,
       setByParty: 'CUSTOMER',
       preferenceType: input.preferenceType,
       sourceJobId: jobId,
@@ -458,16 +438,13 @@ export class CustomerPortalService {
   async rehire(
     customerId: string,
     jobId: string,
+    customerUserId: string,
     input: CustomerRehireDto,
   ) {
-    await this.jobDetail(
-      customerId,
-      jobId,
-      input.customerUserId,
-    );
+    await this.jobDetail(customerId, jobId, customerUserId);
 
     return this.qualityService.rehire(jobId, {
-      requestedByUserId: input.customerUserId,
+      requestedByUserId: customerUserId,
       preferredWorkerId: input.preferredWorkerId,
       startAt: input.startAt,
       endAt: input.endAt,
@@ -479,16 +456,13 @@ export class CustomerPortalService {
   async openComplaint(
     customerId: string,
     jobId: string,
+    customerUserId: string,
     input: CustomerComplaintDto,
   ) {
-    await this.jobDetail(
-      customerId,
-      jobId,
-      input.customerUserId,
-    );
+    await this.jobDetail(customerId, jobId, customerUserId);
 
     return this.exceptionsService.openDispute(jobId, {
-      actorUserId: input.customerUserId,
+      actorUserId: customerUserId,
       caseType: input.caseType,
       priority: input.priority,
       subject: input.subject,
@@ -512,8 +486,8 @@ export class CustomerPortalService {
       .limit(1);
 
     if (!customer) {
-      throw new BadRequestException(
-        'Customer ID và Customer User ID không khớp',
+      throw new ForbiddenException(
+        'Tài khoản hiện tại không thuộc quyền sở hữu customerId này',
       );
     }
 
