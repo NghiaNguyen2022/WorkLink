@@ -39,6 +39,7 @@ import {
   WorkerCreateIncidentDto,
   WorkerOfferRespondDto,
   WorkerReviewDto,
+  WorkerSetRelationshipDto,
 } from './dto/worker-portal.dto';
 
 @Injectable()
@@ -483,6 +484,43 @@ export class WorkerPortalService {
       comment: input.comment,
       wouldHireAgain: input.wouldHireAgain,
     });
+  }
+
+  async setRelationship(
+    workerId: string,
+    workerUserId: string,
+    input: WorkerSetRelationshipDto,
+  ) {
+    await this.assertWorker(workerId, workerUserId);
+
+    const [job] = await this.database.db
+      .select({ customerId: jobs.customerId })
+      .from(jobs)
+      .where(eq(jobs.id, input.jobId))
+      .limit(1);
+
+    if (!job) {
+      throw new NotFoundException('Không tìm thấy Job');
+    }
+
+    return this.qualityService.setRelationship({
+      customerId: job.customerId,
+      workerId,
+      actorUserId: workerUserId,
+      setByParty: 'WORKER',
+      preferenceType: input.preferenceType,
+      sourceJobId: input.jobId,
+      reason: input.reason,
+    });
+  }
+
+  async listRelationships(
+    workerId: string,
+    workerUserId: string,
+  ) {
+    await this.assertWorker(workerId, workerUserId);
+
+    return this.qualityService.workerRelationships(workerId);
   }
 
   private roundMoney(value: number) {

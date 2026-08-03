@@ -274,7 +274,7 @@ export function JobDetailPage() {
                         Gửi đánh giá
                       </button>
                       <button
-                        className="secondary-button"
+                        className="secondary-button preferred"
                         type="button"
                         onClick={() =>
                           action.mutate({
@@ -291,6 +291,25 @@ export function JobDetailPage() {
                         }
                       >
                         Ưu tiên Worker
+                      </button>
+                      <button
+                        className="secondary-button danger"
+                        type="button"
+                        onClick={() =>
+                          action.mutate({
+                            path: 'relationships',
+                            body: {
+                              workerId:
+                                item.assignment.workerId,
+                              preferenceType:
+                                'BLOCKED',
+                              reason:
+                                'Chặn từ Customer Portal',
+                            },
+                          })
+                        }
+                      >
+                        Chặn Worker
                       </button>
                     </div>
                   </>

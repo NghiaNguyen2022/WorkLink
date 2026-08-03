@@ -23,6 +23,7 @@ import {
   WorkerCreateIncidentDto,
   WorkerOfferRespondDto,
   WorkerReviewDto,
+  WorkerSetRelationshipDto,
 } from './dto/worker-portal.dto';
 import { WorkerPortalService } from './worker-portal.service';
 
@@ -240,5 +241,22 @@ export class WorkerPortalController {
     @CurrentUser() user: AuthUser,
   ) {
     return this.service.reviewCustomer(workerId, user.id, dto);
+  }
+
+  @Get('relationships')
+  listRelationships(
+    @Param('workerId') workerId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.service.listRelationships(workerId, user.id);
+  }
+
+  @Post('relationships')
+  setRelationship(
+    @Param('workerId') workerId: string,
+    @Body() dto: WorkerSetRelationshipDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.service.setRelationship(workerId, user.id, dto);
   }
 }

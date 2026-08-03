@@ -262,3 +262,17 @@ export class WorkerReviewDto {
   @IsBoolean()
   wouldHireAgain?: boolean;
 }
+
+export class WorkerSetRelationshipDto {
+  @IsUUID()
+  jobId!: string;
+
+  @IsString()
+  @IsIn(['PREFERRED', 'BLOCKED', 'NEUTRAL'])
+  preferenceType!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  reason?: string;
+}

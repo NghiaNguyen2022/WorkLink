@@ -8,6 +8,7 @@ import type {
   WorkerEarnings,
   WorkerOffer,
   WorkerProfile,
+  WorkerRelationship,
   WorkerSkill,
 } from '../types/worker-portal';
 
@@ -187,5 +188,40 @@ export function getEarnings(
 ) {
   return apiGet<WorkerEarnings>(
     `/worker-portal/workers/${workerId}/earnings?status=${status}`,
+  );
+}
+
+export function submitReview(
+  workerId: string,
+  input: {
+    jobId: string;
+    assignmentId: string;
+    overallRating: number;
+    comment?: string;
+  },
+) {
+  return apiPost(
+    `/worker-portal/workers/${workerId}/reviews`,
+    input,
+  );
+}
+
+export function listRelationships(workerId: string) {
+  return apiGet<WorkerRelationship[]>(
+    `/worker-portal/workers/${workerId}/relationships`,
+  );
+}
+
+export function setRelationship(
+  workerId: string,
+  input: {
+    jobId: string;
+    preferenceType: 'PREFERRED' | 'BLOCKED' | 'NEUTRAL';
+    reason?: string;
+  },
+) {
+  return apiPost<WorkerRelationship>(
+    `/worker-portal/workers/${workerId}/relationships`,
+    input,
   );
 }

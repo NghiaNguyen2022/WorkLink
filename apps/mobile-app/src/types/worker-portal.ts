@@ -135,6 +135,13 @@ export interface AssignmentExecution {
   }>;
 }
 
+export interface WorkerRelationship {
+  customerId: string;
+  workerId: string;
+  setByParty: string;
+  preferenceType: string;
+}
+
 export interface WorkerEarnings {
   worker: { id: string; userId: string; fullName: string };
   summary: {

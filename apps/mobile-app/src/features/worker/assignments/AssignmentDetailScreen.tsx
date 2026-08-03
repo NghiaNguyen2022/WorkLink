@@ -1,11 +1,20 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Alert, StyleSheet, Text } from 'react-native';
+import { useState } from 'react';
+import { Alert, StyleSheet, Text, TextInput } from 'react-native';
 
 import { Card } from '../../../components/Card';
 import { PrimaryButton } from '../../../components/PrimaryButton';
 import { ScreenContainer } from '../../../components/ScreenContainer';
-import { getAssignment } from '../../../lib/workerPortalApi';
+import {
+  getAssignment,
+  setRelationship,
+  submitReview,
+} from '../../../lib/workerPortalApi';
 import type { RootStackParamList } from '../../../navigation/types';
 import { useAuth } from '../../../session/AuthContext';
 import { useCheckIn } from '../checkin/useCheckIn';
@@ -20,6 +29,8 @@ export function AssignmentDetailScreen({ route }: Props) {
   const { assignmentId } = route.params;
   const { workerId } = useAuth();
   const queryClient = useQueryClient();
+  const [rating, setRating] = useState('5');
+  const [comment, setComment] = useState('');
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['worker-assignment', assignmentId],
@@ -29,6 +40,37 @@ export function AssignmentDetailScreen({ route }: Props) {
 
   const checkInMutation = useCheckIn(assignmentId);
   const checkOutMutation = useCheckOut(assignmentId);
+
+  const reviewMutation = useMutation({
+    mutationFn: () =>
+      submitReview(workerId as string, {
+        jobId: data!.assignment.jobId,
+        assignmentId,
+        overallRating: Number(rating) || 5,
+        comment: comment || undefined,
+      }),
+    onError: (err) =>
+      Alert.alert(
+        'Gửi đánh giá thất bại',
+        err instanceof Error ? err.message : 'Đã có lỗi xảy ra',
+      ),
+    onSuccess: () => Alert.alert('Đã gửi đánh giá'),
+  });
+
+  const relationshipMutation = useMutation({
+    mutationFn: (preferenceType: 'PREFERRED' | 'BLOCKED') =>
+      setRelationship(workerId as string, {
+        jobId: data!.assignment.jobId,
+        preferenceType,
+        reason: `Đặt từ Worker App (${preferenceType})`,
+      }),
+    onError: (err) =>
+      Alert.alert(
+        'Không thể cập nhật',
+        err instanceof Error ? err.message : 'Đã có lỗi xảy ra',
+      ),
+    onSuccess: () => Alert.alert('Đã cập nhật'),
+  });
 
   const handleCheckIn = () => {
     checkInMutation.mutate(undefined, {
@@ -109,6 +151,47 @@ export function AssignmentDetailScreen({ route }: Props) {
         />
       ) : null}
 
+      {status === 'COMPLETED' ? (
+        <Card>
+          <Text style={styles.title}>Đánh giá khách hàng</Text>
+          <Text>Điểm (1-5)</Text>
+          <TextInput
+            style={styles.input}
+            value={rating}
+            onChangeText={setRating}
+            keyboardType="numeric"
+          />
+          <Text>Nhận xét</Text>
+          <TextInput
+            style={styles.input}
+            value={comment}
+            onChangeText={setComment}
+            multiline
+          />
+          <PrimaryButton
+            label="Gửi đánh giá"
+            onPress={() => reviewMutation.mutate()}
+            loading={reviewMutation.isPending}
+          />
+          <PrimaryButton
+            label="Ưu tiên khách hàng này"
+            variant="secondary"
+            onPress={() =>
+              relationshipMutation.mutate('PREFERRED')
+            }
+            loading={relationshipMutation.isPending}
+          />
+          <PrimaryButton
+            label="Chặn khách hàng này"
+            variant="danger"
+            onPress={() =>
+              relationshipMutation.mutate('BLOCKED')
+            }
+            loading={relationshipMutation.isPending}
+          />
+        </Card>
+      ) : null}
+
       {data.incidents.length > 0 ? (
         <Card>
           <Text style={styles.title}>Sự cố</Text>
@@ -129,5 +212,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#0F172A',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 15,
   },
 });

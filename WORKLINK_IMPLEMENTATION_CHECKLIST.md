@@ -57,10 +57,10 @@
 
 ## Baseline 07 — Mobile App
 
-- [ ] Worker review customer.
-- [ ] Đánh giá điều kiện làm việc.
-- [ ] Worker-side Preferred/Blocked.
-- [ ] Xem metric cá nhân.
+- [x] Worker review customer (Baseline 13.2 — màn hình trên `AssignmentDetailScreen` khi assignment `COMPLETED`).
+- [ ] Đánh giá điều kiện làm việc (tách biệt khỏi review khách hàng — chưa làm).
+- [x] Worker-side Preferred/Blocked (Baseline 13.2).
+- [ ] Xem metric cá nhân (endpoint `workers/:workerId/quality-metric` hiện đã khóa `@Roles()` chỉ cho nội bộ — cần route worker-portal riêng nếu làm tiếp).
 
 ## UAT
 
@@ -216,7 +216,7 @@
 - [x] Location picker thay cho nhập ID (Track C, Baseline 13).
 - [ ] Requirement builder.
 - [ ] Payment gateway.
-- [ ] Blocked action trên UI.
+- [x] Blocked action trên UI (Baseline 13.2 — nút "Chặn Worker" trên Job Detail, dùng chung endpoint relationships với PREFERRED).
 - [x] Dispute detail/status (Track C, Baseline 13, read-only list trên Job Detail).
 - [ ] UAT toàn bộ Customer journey.
 
@@ -343,3 +343,42 @@ controller nội bộ còn lại:
 - [ ] UAT trên thiết bị/simulator thật (chưa có môi trường mobile trong sandbox này).
 
 **Lưu ý vận hành:** agent nền chạy Track A khởi tạo từ một worktree bị lệch base (trước baseline 12/Track B/C), nên nhánh gốc của nó lẽ ra sẽ revert các track khác nếu merge thẳng. Đã tích hợp thủ công — chỉ lấy phần thật sự mới (`worker-portal`, `apps/mobile-app`, đăng ký module) đặt lên trên `main` hiện tại, chạy lại `pnpm install`/typecheck/build/smoke-test từ đầu thay vì tin tưởng báo cáo của agent.
+
+## Baseline 13.2 — Blocked action (Customer Web) + Worker review/Preferred/Blocked (Mobile App)
+
+### Customer Web
+
+- [x] Nút "Chặn Worker" trên Job Detail, cạnh nút "Ưu tiên Worker" hiện có — cùng gọi
+  `POST customer-portal/customers/:customerId/jobs/:jobId/relationships`, chỉ khác
+  `preferenceType: 'BLOCKED'`.
+
+### Backend — Worker Portal
+
+- [x] `worker-portal`: thêm `GET/POST relationships` — worker tự đặt Preferred/Blocked
+  cho khách hàng của một Job đã làm, dùng lại `QualityService.setRelationship`
+  (`setByParty: 'WORKER'`).
+- [x] Client chỉ cần gửi `jobId`; server tự tra `jobs.customerId` (không tin
+  `customerId` từ client) rồi mới gọi `assertRelationshipActor` phía
+  `QualityService` — kiểm tra chéo hai lớp (worker-portal + quality service).
+- [x] `jobId` không tồn tại → 404; sai chủ sở hữu `workerId` → 403 (đã có sẵn qua
+  `assertWorker`).
+
+### Mobile App
+
+- [x] `AssignmentDetailScreen`: khi assignment `COMPLETED`, hiện form đánh giá
+  (điểm 1-5 + nhận xét) gọi `POST worker-portal/workers/:workerId/reviews`
+  (endpoint đã có sẵn từ Track A, chưa từng có UI gọi tới), và 2 nút "Ưu tiên
+  khách hàng này" / "Chặn khách hàng này" gọi endpoint relationships mới.
+
+### Verify
+
+- [x] `pnpm --filter @worklink/api typecheck` + `build` pass.
+- [x] `pnpm --filter @worklink/customer-web typecheck` pass.
+- [x] `pnpm --filter @worklink/mobile-app typecheck` pass; `expo export -p web`
+  bundle thành công (542 modules).
+- [x] Smoke test qua curl với DB thật (server đang chạy qua `dev-all.bat`): đặt
+  Preferred từ phía worker → 200 đúng `customerId` được tra từ job; sai
+  `workerId` → 403; `jobId` không tồn tại → 404; đã dọn dữ liệu test về
+  `NEUTRAL` sau khi test xong (không để lại rác trong DB dùng chung).
+- [ ] UAT thật trên trình duyệt (Customer Web) và thiết bị/simulator (Mobile
+  App).
