@@ -15,6 +15,7 @@ import { MatchingModule } from './modules/matching/matching.module';
 import { QualityModule } from './modules/quality/quality.module';
 import { ReportingModule } from './modules/reporting/reporting.module';
 import { UsersModule } from './modules/users/users.module';
+import { WorkerPortalModule } from './modules/worker-portal/worker-portal.module';
 import { WorkersModule } from './modules/workers/workers.module';
 
 @Module({
@@ -31,6 +32,7 @@ import { WorkersModule } from './modules/workers/workers.module';
     CustomersModule,
     CustomerPortalModule,
     WorkersModule,
+    WorkerPortalModule,
     JobsModule,
     MatchingModule,
     ExecutionModule,

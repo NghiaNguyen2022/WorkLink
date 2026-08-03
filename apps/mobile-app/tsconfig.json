@@ -1,10 +1,13 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist"
+    "strict": true,
+    "rootDir": "."
   },
   "include": [
-    "src/**/*.ts"
+    "App.tsx",
+    "index.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ]
 }
