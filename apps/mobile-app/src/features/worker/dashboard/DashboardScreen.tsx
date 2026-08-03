@@ -77,6 +77,11 @@ export function DashboardScreen({ navigation }: Props) {
           onPress={() => navigation.navigate('Skills')}
           variant="secondary"
         />
+        <PrimaryButton
+          label="Metric cá nhân"
+          onPress={() => navigation.navigate('Metrics')}
+          variant="secondary"
+        />
       </Card>
 
       <PrimaryButton

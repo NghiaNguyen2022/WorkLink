@@ -57,8 +57,12 @@ export interface WorkerProfile {
   transportType: string | null;
   maxTravelKm: number;
   minimumHourlyRate: number | null;
+  verificationLevel: string;
+  verificationStatus: string;
   rating: number;
   completedJobs: number;
+  cancellationRate: number;
+  onTimeRate: number;
   available: boolean;
   isSuspended: boolean;
   emergencyContactName: string | null;

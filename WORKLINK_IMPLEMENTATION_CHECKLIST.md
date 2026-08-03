@@ -60,7 +60,7 @@
 - [x] Worker review customer (Baseline 13.2 — màn hình trên `AssignmentDetailScreen` khi assignment `COMPLETED`).
 - [ ] Đánh giá điều kiện làm việc (tách biệt khỏi review khách hàng — chưa làm).
 - [x] Worker-side Preferred/Blocked (Baseline 13.2).
-- [ ] Xem metric cá nhân (endpoint `workers/:workerId/quality-metric` hiện đã khóa `@Roles()` chỉ cho nội bộ — cần route worker-portal riêng nếu làm tiếp).
+- [x] Xem metric cá nhân (Baseline 13.4).
 
 ## UAT
 
@@ -401,3 +401,28 @@ Backend đã hỗ trợ `requirements` trong `CreateCustomerJobDto` từ trướ
   bắt buộc + mức ADVANCED, 1 tùy chọn không mức) → lưu và trả về đúng
   từng field; đã xóa Job test khỏi DB sau khi verify xong.
 - [ ] UAT trên trình duyệt thật.
+
+## Baseline 13.4 — Xem metric cá nhân (Mobile App)
+
+Endpoint ops cũ `GET workers/:workerId/quality-metric` đã bị khóa
+`@Roles()` nội bộ ở Baseline 13.1 nên worker không gọi được nữa. Thay
+vì mở thêm route mới, phát hiện `GET worker-portal/workers/:workerId/profile`
+(đã có sẵn từ Track A) đã trả đủ `rating`, `completedJobs`,
+`cancellationRate`, `onTimeRate`, `verificationLevel`,
+`verificationStatus` — chỉ cần build màn hình mới, không cần sửa
+backend.
+
+- [x] `MetricsScreen.tsx` mới — dùng lại `getProfile()`, không thêm
+  endpoint/backend.
+- [x] Thêm route `Metrics` vào `RootNavigator.tsx` và nút điều hướng
+  trên `DashboardScreen`.
+- [x] `types/worker-portal.ts`: bổ sung `verificationLevel`,
+  `verificationStatus`, `cancellationRate`, `onTimeRate` vào
+  `WorkerProfile` (trước đó type thiếu dù backend đã trả về).
+- [x] `pnpm --filter @worklink/mobile-app typecheck` pass; `expo
+  export -p web` bundle thành công.
+- [x] Verify qua curl với DB thật: response `profile` có đủ 6 field
+  MetricsScreen cần, giá trị khớp (`rating: 4.8, completedJobs: 126,
+  cancellationRate: 1.5, onTimeRate: 98, verificationLevel: 'V4',
+  verificationStatus: 'VERIFIED'`).
+- [ ] UAT trên thiết bị/simulator thật.

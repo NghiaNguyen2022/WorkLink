@@ -8,4 +8,5 @@ export type RootStackParamList = {
   Profile: undefined;
   Availability: undefined;
   Skills: undefined;
+  Metrics: undefined;
 };

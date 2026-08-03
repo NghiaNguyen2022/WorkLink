@@ -7,6 +7,7 @@ import { AvailabilityScreen } from '../features/worker/availability/Availability
 import { DashboardScreen } from '../features/worker/dashboard/DashboardScreen';
 import { EarningsScreen } from '../features/worker/earnings/EarningsScreen';
 import { JobFeedScreen } from '../features/worker/job-feed/JobFeedScreen';
+import { MetricsScreen } from '../features/worker/metrics/MetricsScreen';
 import { ProfileScreen } from '../features/worker/profile/ProfileScreen';
 import { SkillsScreen } from '../features/worker/skills/SkillsScreen';
 import { useAuth } from '../session/AuthContext';
@@ -60,6 +61,11 @@ export function RootNavigator() {
             name="Skills"
             component={SkillsScreen}
             options={{ title: 'Kỹ năng & chứng chỉ' }}
+          />
+          <Stack.Screen
+            name="Metrics"
+            component={MetricsScreen}
+            options={{ title: 'Metric cá nhân' }}
           />
         </>
       ) : (
