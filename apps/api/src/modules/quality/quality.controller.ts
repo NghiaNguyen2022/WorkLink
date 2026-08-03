@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
+import { Roles } from '../auth/decorators/roles.decorator';
 import {
   CreateReviewDto,
   ModerateReviewDto,
@@ -17,6 +18,7 @@ import {
 import { QualityService } from './quality.service';
 
 @ApiTags('Quality & Relationships')
+@Roles('CALL_CENTER', 'OPERATOR', 'VERIFIER', 'TRAINER', 'FINANCE', 'RISK_MANAGER', 'ADMIN')
 @Controller()
 export class QualityController {
   constructor(private readonly service: QualityService) {}

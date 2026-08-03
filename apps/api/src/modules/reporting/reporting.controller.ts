@@ -9,6 +9,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
 import {
   ExportQueryDto,
   ReportingQueryDto,
@@ -16,6 +17,7 @@ import {
 import { ReportingService } from './reporting.service';
 
 @ApiTags('Reporting & Risk')
+@Roles('OPERATOR', 'FINANCE', 'RISK_MANAGER', 'ADMIN')
 @Controller('reporting')
 export class ReportingController {
   constructor(

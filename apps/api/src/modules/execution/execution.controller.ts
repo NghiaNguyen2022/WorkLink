@@ -10,6 +10,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { Roles } from '../auth/decorators/roles.decorator';
 import {
   AddEvidenceDto,
   AssignmentActionDto,
@@ -21,6 +22,7 @@ import {
 import { ExecutionService } from './execution.service';
 
 @ApiTags('Job Execution')
+@Roles('CALL_CENTER', 'OPERATOR', 'VERIFIER', 'TRAINER', 'FINANCE', 'RISK_MANAGER', 'ADMIN')
 @Controller()
 export class ExecutionController {
   constructor(

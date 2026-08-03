@@ -11,6 +11,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { Roles } from '../auth/decorators/roles.decorator';
 import { CreateJobDto } from './dto/create-job.dto';
 import {
   AcceptJobQuoteDto,
@@ -39,6 +40,7 @@ export class JobsController {
     return this.jobsService.findCategories();
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'VERIFIER', 'FINANCE', 'RISK_MANAGER', 'ADMIN')
   @Get('jobs')
   @ApiOperation({
     summary: 'Danh sách bài đăng công việc',
@@ -47,6 +49,7 @@ export class JobsController {
     return this.jobsService.findAll();
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'VERIFIER', 'FINANCE', 'RISK_MANAGER', 'ADMIN')
   @Get('jobs/:id')
   @ApiOperation({
     summary:
@@ -56,6 +59,7 @@ export class JobsController {
     return this.jobsService.findById(id);
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'ADMIN')
   @Post('jobs')
   @ApiOperation({
     summary: 'Tạo bài đăng công việc dạng nháp',
@@ -64,6 +68,7 @@ export class JobsController {
     return this.jobsService.create(input);
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'ADMIN')
   @Patch('jobs/:id')
   @ApiOperation({
     summary: 'Cập nhật công việc đang ở trạng thái nháp',
@@ -75,6 +80,7 @@ export class JobsController {
     return this.jobsService.update(id, input);
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'ADMIN')
   @Post('jobs/:id/submit')
   @ApiOperation({
     summary: 'Gửi công việc cho tổng đài xác minh',
@@ -86,6 +92,7 @@ export class JobsController {
     return this.jobsService.submit(id, input);
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'VERIFIER', 'ADMIN')
   @Post('jobs/:id/verification-notes')
   @ApiOperation({
     summary: 'Thêm ghi chú xác minh của tổng đài',
@@ -100,6 +107,7 @@ export class JobsController {
     );
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'ADMIN')
   @Post('jobs/:id/request-information')
   @ApiOperation({
     summary: 'Yêu cầu khách hàng bổ sung thông tin',
@@ -114,6 +122,7 @@ export class JobsController {
     );
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'VERIFIER', 'ADMIN')
   @Post('jobs/:id/verify')
   @ApiOperation({
     summary: 'Điều phối xác nhận công việc đủ thông tin',
@@ -125,6 +134,7 @@ export class JobsController {
     return this.jobsService.verify(id, input);
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'FINANCE', 'ADMIN')
   @Post('jobs/:id/quote')
   @ApiOperation({
     summary: 'Tính và tạo báo giá mới cho công việc',
@@ -136,6 +146,7 @@ export class JobsController {
     return this.jobsService.createQuote(id, input);
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'ADMIN')
   @Post('jobs/:id/quotes/:quoteId/accept')
   @ApiOperation({
     summary: 'Khách hàng chấp nhận báo giá',
@@ -152,6 +163,7 @@ export class JobsController {
     );
   }
 
+  @Roles('CALL_CENTER', 'OPERATOR', 'RISK_MANAGER', 'ADMIN')
   @Post('jobs/:id/cancel')
   @ApiOperation({
     summary: 'Hủy công việc trước khi Matching',

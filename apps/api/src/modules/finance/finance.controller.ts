@@ -11,6 +11,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { Roles } from '../auth/decorators/roles.decorator';
 import {
   AddAdjustmentDto,
   ApproveSettlementDto,
@@ -20,6 +21,15 @@ import {
 } from './dto/finance.dto';
 import { FinanceService } from './finance.service';
 
+const FINANCE_READ_ROLES = [
+  'OPERATOR',
+  'FINANCE',
+  'RISK_MANAGER',
+  'ADMIN',
+] as const;
+
+const FINANCE_ACTION_ROLES = ['FINANCE', 'ADMIN'] as const;
+
 @ApiTags('Finance & Settlement')
 @Controller()
 export class FinanceController {
@@ -27,6 +37,7 @@ export class FinanceController {
     private readonly financeService: FinanceService,
   ) {}
 
+  @Roles(...FINANCE_ACTION_ROLES)
   @Post('jobs/:jobId/settlement/prepare')
   @ApiOperation({
     summary: 'Lập bảng đối soát công việc',
@@ -38,6 +49,7 @@ export class FinanceController {
     return this.financeService.prepare(jobId, input);
   }
 
+  @Roles(...FINANCE_READ_ROLES)
   @Get('jobs/:jobId/settlement')
   getSettlement(
     @Param('jobId') jobId: string,
@@ -45,6 +57,7 @@ export class FinanceController {
     return this.financeService.getByJob(jobId);
   }
 
+  @Roles(...FINANCE_ACTION_ROLES)
   @Post('jobs/:jobId/settlement/adjustments')
   addAdjustment(
     @Param('jobId') jobId: string,
@@ -56,6 +69,7 @@ export class FinanceController {
     );
   }
 
+  @Roles(...FINANCE_ACTION_ROLES)
   @Post('jobs/:jobId/settlement/approve')
   approve(
     @Param('jobId') jobId: string,
@@ -64,6 +78,7 @@ export class FinanceController {
     return this.financeService.approve(jobId, input);
   }
 
+  @Roles(...FINANCE_ACTION_ROLES)
   @Post('payments/:paymentId/mark-paid')
   markPaid(
     @Param('paymentId') paymentId: string,
@@ -75,6 +90,7 @@ export class FinanceController {
     );
   }
 
+  @Roles(...FINANCE_ACTION_ROLES)
   @Post('payments/:paymentId/fail')
   fail(
     @Param('paymentId') paymentId: string,
@@ -83,6 +99,7 @@ export class FinanceController {
     return this.financeService.fail(paymentId, input);
   }
 
+  @Roles(...FINANCE_READ_ROLES)
   @Get('workers/:workerId/earnings')
   workerEarnings(
     @Param('workerId') workerId: string,
@@ -94,6 +111,7 @@ export class FinanceController {
     );
   }
 
+  @Roles(...FINANCE_READ_ROLES)
   @Get('finance/settlements')
   listSettlements() {
     return this.financeService.listSettlements();

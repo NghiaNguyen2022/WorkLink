@@ -8,9 +8,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { Roles } from '../auth/decorators/roles.decorator';
 import { QualityInsightsService } from './quality-insights.service';
 
 @ApiTags('Quality Insights')
+@Roles('CALL_CENTER', 'OPERATOR', 'VERIFIER', 'TRAINER', 'FINANCE', 'RISK_MANAGER', 'ADMIN')
 @Controller()
 export class QualityInsightsController {
   constructor(

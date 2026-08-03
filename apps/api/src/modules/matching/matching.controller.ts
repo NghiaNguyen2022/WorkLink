@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+import { Roles } from '../auth/decorators/roles.decorator';
 import {
   ConfirmOfferDto,
   OfferCandidateDto,
@@ -10,6 +11,7 @@ import {
 import { MatchingService } from './matching.service';
 
 @ApiTags('Matching')
+@Roles('CALL_CENTER', 'OPERATOR', 'VERIFIER', 'TRAINER', 'FINANCE', 'RISK_MANAGER', 'ADMIN')
 @Controller('jobs/:jobId/matching')
 export class MatchingController {
   constructor(private readonly service: MatchingService) {}

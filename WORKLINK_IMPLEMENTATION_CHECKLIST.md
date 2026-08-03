@@ -271,7 +271,44 @@
 - [x] Track B: Operations Web — form mở dispute, fulfill replacement, approve adjustment.
 - [x] Track C: Customer Web — Profile UI, Location management UI, category/location picker, dispute detail/status.
 - [ ] Track D (sau): Public Website (Next.js), theo giai đoạn Pilot của BPRD.
-- [ ] `@Roles()` chi tiết theo từng endpoint Operations (dispute/replacement/adjustment hiện chỉ yêu cầu "đã đăng nhập").
+- [x] `@Roles()` chi tiết theo từng endpoint Operations (Baseline 13.1).
+
+### Baseline 13.1 — RBAC chi tiết cho Operations API
+
+Trước đây mọi endpoint ngoài `customer-portal`/`worker-portal` chỉ yêu
+cầu "đã đăng nhập" (bất kỳ vai trò nào), do `RolesGuard` cho qua khi
+route không khai báo `@Roles()`. Đã gắn `@Roles()` cho toàn bộ
+controller nội bộ còn lại:
+
+- [x] `jobs.controller.ts`: `job-categories` giữ nguyên mở cho mọi vai
+  trò đã đăng nhập (khách hàng cần dùng khi tạo Job); các route còn
+  lại (list/detail/create/update/submit/verify/quote/cancel...) giới
+  hạn theo `CALL_CENTER/OPERATOR/VERIFIER/FINANCE/RISK_MANAGER/ADMIN`
+  tùy hành động.
+- [x] `matching.controller.ts`, `execution.controller.ts`,
+  `quality.controller.ts`, `quality-insights.controller.ts`: toàn bộ
+  route là nội bộ vận hành (worker/customer thao tác qua
+  `worker-portal`/`customer-portal` gọi thẳng service, không qua HTTP
+  của các controller này) — giới hạn cho nhóm vai trò nội bộ.
+- [x] `reporting.controller.ts`: `OPERATOR/FINANCE/RISK_MANAGER/ADMIN`.
+- [x] `finance.controller.ts`: tách read (`OPERATOR/FINANCE/RISK_MANAGER/ADMIN`)
+  và hành động sinh/duyệt tiền (`FINANCE/ADMIN`).
+- [x] `exceptions.controller.ts`: tách read, hành động khởi tạo
+  (`CALL_CENTER/OPERATOR/RISK_MANAGER/ADMIN`), và phê duyệt tài chính
+  (`cancellation-assessments/:id/approve`, `financial-adjustments/:id/approve`
+  → `FINANCE/RISK_MANAGER/ADMIN`).
+- [x] `customers.controller.ts`, `workers.controller.ts`: danh sách nội
+  bộ, giới hạn cho nhóm vai trò nội bộ.
+- [x] `users.controller.ts`: chỉ `ADMIN` (danh sách toàn bộ tài khoản).
+- [x] `pnpm --filter @worklink/api typecheck` + `build` pass.
+- [x] Smoke test qua curl với DB thật, đủ 4 vai trò (admin/operator/
+  customer/worker): operator truy cập đúng toàn bộ endpoint ops đang
+  dùng bởi `operations-web`; customer/worker bị 403 khi gọi endpoint
+  ops; `job-categories` vẫn mở cho customer/worker; `users` chỉ admin
+  mới vào được (operator 403); `financial-adjustments/:id/approve`
+  operator bị 403, admin qua được vòng kiểm tra vai trò;
+  `customer-portal`/`worker-portal` không bị ảnh hưởng (regression
+  check).
 
 ### Track C — chi tiết
 
