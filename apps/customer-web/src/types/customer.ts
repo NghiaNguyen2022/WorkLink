@@ -25,6 +25,19 @@ export interface CustomerDashboard {
   recentJobs: Job[];
 }
 
+export interface CustomerDispute {
+  id: string;
+  caseCode: string;
+  caseType: string;
+  priority: string;
+  status: string;
+  subject: string;
+  description: string;
+  resolution?: string | null;
+  createdAt: string;
+  resolvedAt?: string | null;
+}
+
 export interface CustomerJobDetail {
   job: Job;
   requirements: Array<Record<string, unknown>>;
@@ -75,4 +88,42 @@ export interface CustomerJobDetail {
     comment?: string | null;
   }>;
   settlement?: Record<string, unknown> | null;
+  disputes: CustomerDispute[];
+}
+
+export interface CustomerProfile {
+  id: string;
+  customerType: string;
+  displayName: string;
+  companyName?: string | null;
+  taxCode?: string | null;
+  verificationStatus: string;
+  rating: number;
+  completedJobs: number;
+  email: string;
+  fullName: string;
+  phone?: string | null;
+}
+
+export interface CustomerLocation {
+  id: string;
+  customerId: string;
+  label: string;
+  contactName: string;
+  contactPhone: string;
+  addressLine: string;
+  ward?: string | null;
+  district: string;
+  city: string;
+  isDefault: boolean;
+}
+
+export interface JobCategory {
+  id: string;
+  code: string;
+  name: string;
+  description?: string | null;
+  pricingUnit: string;
+  baseRate: number;
+  active: boolean;
 }

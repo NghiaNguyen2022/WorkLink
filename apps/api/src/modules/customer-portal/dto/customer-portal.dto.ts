@@ -163,3 +163,96 @@ export class CustomerComplaintDto {
   @MaxLength(5000)
   description!: string;
 }
+
+export class UpdateCustomerProfileDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(150)
+  displayName?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  companyName?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  phone?: string;
+}
+
+export class CreateCustomerLocationDto {
+  @IsString()
+  @MaxLength(100)
+  label!: string;
+
+  @IsString()
+  @MaxLength(150)
+  contactName!: string;
+
+  @IsString()
+  @MaxLength(30)
+  contactPhone!: string;
+
+  @IsString()
+  @MaxLength(255)
+  addressLine!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  ward?: string;
+
+  @IsString()
+  @MaxLength(100)
+  district!: string;
+
+  @IsString()
+  @MaxLength(100)
+  city!: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isDefault?: boolean;
+}
+
+export class UpdateCustomerLocationDto {
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  label?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(150)
+  contactName?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  contactPhone?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  addressLine?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  ward?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  district?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  city?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isDefault?: boolean;
+}

@@ -36,11 +36,14 @@ import { QualityService } from '../quality/quality.service';
 import {
   ApproveQuoteDto,
   CreateCustomerJobDto,
+  CreateCustomerLocationDto,
   CustomerActionDto,
   CustomerComplaintDto,
   CustomerRehireDto,
   CustomerRelationshipDto,
   CustomerReviewDto,
+  UpdateCustomerLocationDto,
+  UpdateCustomerProfileDto,
 } from './dto/customer-portal.dto';
 
 @Injectable()
@@ -166,6 +169,7 @@ export class CustomerPortalService {
       jobPayments,
       jobReviews,
       [settlement],
+      exceptionsOverview,
     ] = await Promise.all([
       this.database.db
         .select()
@@ -217,6 +221,7 @@ export class CustomerPortalService {
         .from(settlements)
         .where(eq(settlements.jobId, jobId))
         .limit(1),
+      this.exceptionsService.overview(jobId),
     ]);
 
     return {
@@ -227,6 +232,7 @@ export class CustomerPortalService {
       payments: jobPayments,
       reviews: jobReviews,
       settlement: settlement ?? null,
+      disputes: exceptionsOverview.cases,
     };
   }
 
@@ -468,6 +474,194 @@ export class CustomerPortalService {
       subject: input.subject,
       description: input.description,
     });
+  }
+
+  async getProfile(
+    customerId: string,
+    customerUserId: string,
+  ) {
+    const customer = await this.assertCustomer(
+      customerId,
+      customerUserId,
+    );
+
+    const [user] = await this.database.db
+      .select({
+        email: users.email,
+        fullName: users.fullName,
+        phone: users.phone,
+      })
+      .from(users)
+      .where(eq(users.id, customerUserId))
+      .limit(1);
+
+    return {
+      id: customer.id,
+      customerType: customer.customerType,
+      displayName: customer.displayName,
+      companyName: customer.companyName,
+      taxCode: customer.taxCode,
+      verificationStatus: customer.verificationStatus,
+      rating: customer.rating,
+      completedJobs: customer.completedJobs,
+      email: user?.email ?? '',
+      fullName: user?.fullName ?? '',
+      phone: user?.phone ?? null,
+    };
+  }
+
+  async updateProfile(
+    customerId: string,
+    customerUserId: string,
+    input: UpdateCustomerProfileDto,
+  ) {
+    await this.assertCustomer(customerId, customerUserId);
+
+    await this.database.db.transaction(async (tx) => {
+      if (
+        input.displayName !== undefined ||
+        input.companyName !== undefined
+      ) {
+        await tx
+          .update(customerProfiles)
+          .set({
+            ...(input.displayName !== undefined
+              ? { displayName: input.displayName }
+              : {}),
+            ...(input.companyName !== undefined
+              ? { companyName: input.companyName }
+              : {}),
+          })
+          .where(eq(customerProfiles.id, customerId));
+      }
+
+      if (input.phone !== undefined) {
+        await tx
+          .update(users)
+          .set({ phone: input.phone })
+          .where(eq(users.id, customerUserId));
+      }
+    });
+
+    return this.getProfile(customerId, customerUserId);
+  }
+
+  async listLocations(
+    customerId: string,
+    customerUserId: string,
+  ) {
+    await this.assertCustomer(customerId, customerUserId);
+
+    return this.database.db
+      .select()
+      .from(customerLocations)
+      .where(eq(customerLocations.customerId, customerId))
+      .orderBy(desc(customerLocations.createdAt));
+  }
+
+  async createLocation(
+    customerId: string,
+    customerUserId: string,
+    input: CreateCustomerLocationDto,
+  ) {
+    await this.assertCustomer(customerId, customerUserId);
+
+    const locationId = randomUUID();
+
+    await this.database.db.transaction(async (tx) => {
+      if (input.isDefault) {
+        await tx
+          .update(customerLocations)
+          .set({ isDefault: false })
+          .where(
+            eq(customerLocations.customerId, customerId),
+          );
+      }
+
+      await tx.insert(customerLocations).values({
+        id: locationId,
+        customerId,
+        label: input.label,
+        contactName: input.contactName,
+        contactPhone: input.contactPhone,
+        addressLine: input.addressLine,
+        ward: input.ward,
+        district: input.district,
+        city: input.city,
+        isDefault: input.isDefault ?? false,
+      });
+    });
+
+    return this.listLocations(customerId, customerUserId);
+  }
+
+  async updateLocation(
+    customerId: string,
+    locationId: string,
+    customerUserId: string,
+    input: UpdateCustomerLocationDto,
+  ) {
+    await this.assertCustomer(customerId, customerUserId);
+
+    const [location] = await this.database.db
+      .select({ id: customerLocations.id })
+      .from(customerLocations)
+      .where(
+        and(
+          eq(customerLocations.id, locationId),
+          eq(customerLocations.customerId, customerId),
+        ),
+      )
+      .limit(1);
+
+    if (!location) {
+      throw new NotFoundException(
+        'Không tìm thấy địa điểm của khách hàng',
+      );
+    }
+
+    await this.database.db.transaction(async (tx) => {
+      if (input.isDefault) {
+        await tx
+          .update(customerLocations)
+          .set({ isDefault: false })
+          .where(
+            eq(customerLocations.customerId, customerId),
+          );
+      }
+
+      await tx
+        .update(customerLocations)
+        .set({
+          ...(input.label !== undefined
+            ? { label: input.label }
+            : {}),
+          ...(input.contactName !== undefined
+            ? { contactName: input.contactName }
+            : {}),
+          ...(input.contactPhone !== undefined
+            ? { contactPhone: input.contactPhone }
+            : {}),
+          ...(input.addressLine !== undefined
+            ? { addressLine: input.addressLine }
+            : {}),
+          ...(input.ward !== undefined
+            ? { ward: input.ward }
+            : {}),
+          ...(input.district !== undefined
+            ? { district: input.district }
+            : {}),
+          ...(input.city !== undefined
+            ? { city: input.city }
+            : {}),
+          ...(input.isDefault !== undefined
+            ? { isDefault: input.isDefault }
+            : {}),
+        })
+        .where(eq(customerLocations.id, locationId));
+    });
+
+    return this.listLocations(customerId, customerUserId);
   }
 
   private async assertCustomer(

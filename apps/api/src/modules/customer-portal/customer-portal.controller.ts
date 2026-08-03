@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -14,11 +15,14 @@ import { CustomerPortalService } from './customer-portal.service';
 import {
   ApproveQuoteDto,
   CreateCustomerJobDto,
+  CreateCustomerLocationDto,
   CustomerActionDto,
   CustomerComplaintDto,
   CustomerRehireDto,
   CustomerRelationshipDto,
   CustomerReviewDto,
+  UpdateCustomerLocationDto,
+  UpdateCustomerProfileDto,
 } from './dto/customer-portal.dto';
 
 @ApiTags('Customer Portal')
@@ -169,6 +173,63 @@ export class CustomerPortalController {
     return this.service.openComplaint(
       customerId,
       jobId,
+      user.id,
+      dto,
+    );
+  }
+
+  @Get('profile')
+  getProfile(
+    @Param('customerId') customerId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.service.getProfile(customerId, user.id);
+  }
+
+  @Patch('profile')
+  updateProfile(
+    @Param('customerId') customerId: string,
+    @Body() dto: UpdateCustomerProfileDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.service.updateProfile(
+      customerId,
+      user.id,
+      dto,
+    );
+  }
+
+  @Get('locations')
+  listLocations(
+    @Param('customerId') customerId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.service.listLocations(customerId, user.id);
+  }
+
+  @Post('locations')
+  createLocation(
+    @Param('customerId') customerId: string,
+    @Body() dto: CreateCustomerLocationDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.service.createLocation(
+      customerId,
+      user.id,
+      dto,
+    );
+  }
+
+  @Patch('locations/:locationId')
+  updateLocation(
+    @Param('customerId') customerId: string,
+    @Param('locationId') locationId: string,
+    @Body() dto: UpdateCustomerLocationDto,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.service.updateLocation(
+      customerId,
+      locationId,
       user.id,
       dto,
     );

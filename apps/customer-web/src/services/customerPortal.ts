@@ -2,6 +2,8 @@ import { apiRequest } from '../lib/api';
 import type {
   CustomerDashboard,
   CustomerJobDetail,
+  CustomerLocation,
+  CustomerProfile,
   Job,
 } from '../types/customer';
 
@@ -47,6 +49,58 @@ export const customerPortalApi = {
       `/customer-portal/customers/${customerId}/jobs/${jobId}/${action}`,
       {
         method: 'POST',
+        body: JSON.stringify(body),
+      },
+    );
+  },
+
+  profile(customerId: string) {
+    return apiRequest<CustomerProfile>(
+      `/customer-portal/customers/${customerId}/profile`,
+    );
+  },
+
+  updateProfile(
+    customerId: string,
+    body: Record<string, unknown>,
+  ) {
+    return apiRequest<CustomerProfile>(
+      `/customer-portal/customers/${customerId}/profile`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify(body),
+      },
+    );
+  },
+
+  locations(customerId: string) {
+    return apiRequest<CustomerLocation[]>(
+      `/customer-portal/customers/${customerId}/locations`,
+    );
+  },
+
+  createLocation(
+    customerId: string,
+    body: Record<string, unknown>,
+  ) {
+    return apiRequest<CustomerLocation[]>(
+      `/customer-portal/customers/${customerId}/locations`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+      },
+    );
+  },
+
+  updateLocation(
+    customerId: string,
+    locationId: string,
+    body: Record<string, unknown>,
+  ) {
+    return apiRequest<CustomerLocation[]>(
+      `/customer-portal/customers/${customerId}/locations/${locationId}`,
+      {
+        method: 'PATCH',
         body: JSON.stringify(body),
       },
     );

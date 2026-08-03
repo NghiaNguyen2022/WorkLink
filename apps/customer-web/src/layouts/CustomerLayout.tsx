@@ -3,6 +3,8 @@ import {
   CirclePlus,
   LayoutDashboard,
   LogOut,
+  MapPin,
+  UserRound,
 } from 'lucide-react';
 import {
   Navigate,
@@ -42,6 +44,14 @@ export function CustomerLayout() {
           <NavLink to="/jobs/new">
             <CirclePlus size={18} />
             Đăng việc mới
+          </NavLink>
+          <NavLink to="/locations">
+            <MapPin size={18} />
+            Địa điểm
+          </NavLink>
+          <NavLink to="/profile">
+            <UserRound size={18} />
+            Hồ sơ
           </NavLink>
         </nav>
 

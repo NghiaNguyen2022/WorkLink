@@ -9,7 +9,9 @@ import { CreateJobPage } from '../pages/CreateJobPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { JobDetailPage } from '../pages/JobDetailPage';
 import { JobsPage } from '../pages/JobsPage';
+import { LocationsPage } from '../pages/LocationsPage';
 import { LoginPage } from '../pages/LoginPage';
+import { ProfilePage } from '../pages/ProfilePage';
 import { RegisterPage } from '../pages/RegisterPage';
 
 export function App() {
@@ -37,6 +39,14 @@ export function App() {
         <Route
           path="/jobs/:jobId"
           element={<JobDetailPage />}
+        />
+        <Route
+          path="/locations"
+          element={<LocationsPage />}
+        />
+        <Route
+          path="/profile"
+          element={<ProfilePage />}
         />
       </Route>
     </Routes>

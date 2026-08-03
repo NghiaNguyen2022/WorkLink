@@ -1,7 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
+import {
+  useMutation,
+  useQuery,
+} from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { catalogApi } from '../services/catalog';
 import { customerPortalApi } from '../services/customerPortal';
 import { useCustomerSession } from '../session/CustomerSession';
 
@@ -10,6 +14,17 @@ export function CreateJobPage() {
   const navigate = useNavigate();
   const [categoryId, setCategoryId] = useState('');
   const [locationId, setLocationId] = useState('');
+
+  const categoriesQuery = useQuery({
+    queryKey: ['job-categories'],
+    queryFn: () => catalogApi.categories(),
+  });
+
+  const locationsQuery = useQuery({
+    queryKey: ['customer-locations', session.customerId],
+    queryFn: () =>
+      customerPortalApi.locations(session.customerId),
+  });
   const [title, setTitle] = useState('');
   const [description, setDescription] =
     useState('');
@@ -54,22 +69,48 @@ export function CreateJobPage() {
       <section className="customer-card form-stack">
         <div className="form-row">
           <label>
-            Category ID
-            <input
+            Danh mục công việc
+            <select
               value={categoryId}
               onChange={(event) =>
                 setCategoryId(event.target.value)
               }
-            />
+            >
+              <option value="">Chọn danh mục</option>
+              {categoriesQuery.data?.map((category) => (
+                <option
+                  key={category.id}
+                  value={category.id}
+                >
+                  {category.name}
+                </option>
+              ))}
+            </select>
           </label>
           <label>
-            Location ID
-            <input
+            Địa điểm làm việc
+            <select
               value={locationId}
               onChange={(event) =>
                 setLocationId(event.target.value)
               }
-            />
+            >
+              <option value="">Chọn địa điểm</option>
+              {locationsQuery.data?.map((location) => (
+                <option
+                  key={location.id}
+                  value={location.id}
+                >
+                  {location.label} — {location.addressLine}
+                </option>
+              ))}
+            </select>
+            {locationsQuery.data?.length === 0 && (
+              <small>
+                Chưa có địa điểm nào, hãy thêm tại mục Địa
+                điểm.
+              </small>
+            )}
           </label>
         </div>
         <label>

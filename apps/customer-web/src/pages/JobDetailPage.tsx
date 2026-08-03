@@ -370,6 +370,31 @@ export function JobDetailPage() {
 
         <section className="customer-card full-width">
           <h2>Khiếu nại / Tranh chấp</h2>
+          {data.disputes.length > 0 && (
+            <div className="stack-list">
+              {data.disputes.map((dispute) => (
+                <article key={dispute.id}>
+                  <div>
+                    <strong>{dispute.subject}</strong>
+                    <StatusBadge status={dispute.status} />
+                  </div>
+                  <small>
+                    {dispute.caseCode} •{' '}
+                    {new Date(
+                      dispute.createdAt,
+                    ).toLocaleString('vi-VN')}
+                  </small>
+                  <p>{dispute.description}</p>
+                  {dispute.resolution && (
+                    <p>
+                      <strong>Kết quả xử lý: </strong>
+                      {dispute.resolution}
+                    </p>
+                  )}
+                </article>
+              ))}
+            </div>
+          )}
           <div className="form-stack">
             <label>
               Nội dung

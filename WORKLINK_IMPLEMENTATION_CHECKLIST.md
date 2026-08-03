@@ -210,14 +210,14 @@
 ## Chưa hoàn tất/UAT
 
 - [x] JWT Authentication (Baseline 12).
-- [ ] Customer Profile UI.
-- [ ] Location Management UI.
-- [ ] Category picker thay cho nhập ID.
-- [ ] Location picker thay cho nhập ID.
+- [x] Customer Profile UI (Track C, Baseline 13).
+- [x] Location Management UI (Track C, Baseline 13).
+- [x] Category picker thay cho nhập ID (Track C, Baseline 13).
+- [x] Location picker thay cho nhập ID (Track C, Baseline 13).
 - [ ] Requirement builder.
 - [ ] Payment gateway.
 - [ ] Blocked action trên UI.
-- [ ] Dispute detail/status.
+- [x] Dispute detail/status (Track C, Baseline 13, read-only list trên Job Detail).
 - [ ] UAT toàn bộ Customer journey.
 
 ## Baseline 11.1 — Pricing Quote Field Fix
@@ -269,5 +269,16 @@
 
 - [ ] Track A: Worker Portal API (`apps/api/src/modules/worker-portal`) + Worker Mobile App (Expo/React Native).
 - [ ] Track B: Operations Web — form mở dispute, fulfill replacement, approve adjustment; `@Roles()` theo từng endpoint.
-- [ ] Track C: Customer Web — Profile UI, Location management UI, category/location picker, dispute detail/status.
+- [x] Track C: Customer Web — Profile UI, Location management UI, category/location picker, dispute detail/status.
 - [ ] Track D (sau): Public Website (Next.js), theo giai đoạn Pilot của BPRD.
+
+### Track C — chi tiết
+
+- [x] `customer-portal`: `GET/PATCH profile` (displayName, companyName, phone), ownership qua `assertCustomer`.
+- [x] `customer-portal`: `GET/POST/PATCH locations` (customer_locations CRUD, chỉ chủ sở hữu).
+- [x] `customer-web`: trang Hồ sơ (`/profile`) và Địa điểm (`/locations`) + nav sidebar.
+- [x] `customer-web`: `CreateJobPage` dùng dropdown cho category (`GET /job-categories`, đã có sẵn ở `JobsController`) và location (danh sách của khách hàng).
+- [x] `customer-portal`: `jobDetail` trả thêm `disputes` (support cases theo job, từ `ExceptionsService.overview`), hiển thị lịch sử khiếu nại read-only trên `JobDetailPage`.
+- [x] `pnpm --filter @worklink/api typecheck` và `pnpm --filter @worklink/customer-web typecheck` pass.
+- [x] Smoke test thủ công qua curl với DB thật (seed `customer@worklink.local`): login, GET/PATCH profile, GET/POST locations, GET job-categories, GET job detail có `disputes`, 401/403/404 đúng theo kỳ vọng.
+- [ ] UAT trên trình duyệt thật.
