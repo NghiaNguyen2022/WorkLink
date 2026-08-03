@@ -38,9 +38,26 @@ export interface CustomerDispute {
   resolvedAt?: string | null;
 }
 
+export interface JobRequirement {
+  id: string;
+  requirementType: string;
+  requirementCode?: string | null;
+  description: string;
+  mandatory: boolean;
+  minimumLevel?: string | null;
+}
+
+export interface JobRequirementInput {
+  requirementType: string;
+  requirementCode?: string;
+  description: string;
+  mandatory: boolean;
+  minimumLevel?: string;
+}
+
 export interface CustomerJobDetail {
   job: Job;
-  requirements: Array<Record<string, unknown>>;
+  requirements: JobRequirement[];
   quotes: Array<{
     id: string;
     quoteStatus: string;

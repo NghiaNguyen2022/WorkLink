@@ -121,6 +121,41 @@ export function JobDetailPage() {
           )}
         </section>
 
+        {data.requirements.length > 0 && (
+          <section className="customer-card">
+            <h2>Yêu cầu công việc</h2>
+            <div className="requirement-list">
+              {data.requirements.map((item) => (
+                <div
+                  key={item.id}
+                  className="requirement-row"
+                >
+                  <div>
+                    <strong>
+                      {item.requirementType}
+                    </strong>
+                    {item.mandatory ? (
+                      <span className="requirement-tag mandatory">
+                        Bắt buộc
+                      </span>
+                    ) : (
+                      <span className="requirement-tag">
+                        Tùy chọn
+                      </span>
+                    )}
+                    {item.minimumLevel && (
+                      <span className="requirement-tag">
+                        {item.minimumLevel}
+                      </span>
+                    )}
+                    <p>{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section className="customer-card">
           <h2>Báo giá</h2>
           <div className="stack-list">

@@ -214,7 +214,7 @@
 - [x] Location Management UI (Track C, Baseline 13).
 - [x] Category picker thay cho nhập ID (Track C, Baseline 13).
 - [x] Location picker thay cho nhập ID (Track C, Baseline 13).
-- [ ] Requirement builder.
+- [x] Requirement builder (Baseline 13.3).
 - [ ] Payment gateway.
 - [x] Blocked action trên UI (Baseline 13.2 — nút "Chặn Worker" trên Job Detail, dùng chung endpoint relationships với PREFERRED).
 - [x] Dispute detail/status (Track C, Baseline 13, read-only list trên Job Detail).
@@ -382,3 +382,22 @@ controller nội bộ còn lại:
   `NEUTRAL` sau khi test xong (không để lại rác trong DB dùng chung).
 - [ ] UAT thật trên trình duyệt (Customer Web) và thiết bị/simulator (Mobile
   App).
+
+## Baseline 13.3 — Requirement Builder (Customer Web)
+
+Backend đã hỗ trợ `requirements` trong `CreateCustomerJobDto` từ trước
+(Baseline 11), nhưng `CreateJobPage.tsx` luôn gửi mảng rỗng — chưa có UI.
+
+- [x] `CreateJobPage.tsx`: form thêm/xóa yêu cầu công việc — loại
+  (Kỹ năng/Chứng chỉ/Tác phong/Kinh nghiệm), mô tả, bắt buộc hay
+  không, mức tối thiểu (Cơ bản/Trung bình/Nâng cao/Chuyên sâu, khớp
+  quy ước đã seed sẵn `INTERMEDIATE`/`ADVANCED`).
+- [x] `JobDetailPage.tsx`: hiển thị read-only danh sách yêu cầu đã lưu
+  (dữ liệu đã được fetch từ trước nhưng chưa từng render).
+- [x] `types/customer.ts`: thêm `JobRequirement`/`JobRequirementInput`
+  thay cho `Record<string, unknown>` không rõ nghĩa.
+- [x] `pnpm --filter @worklink/customer-web typecheck` pass.
+- [x] Smoke test qua curl với DB thật: tạo Job kèm 2 requirement (1
+  bắt buộc + mức ADVANCED, 1 tùy chọn không mức) → lưu và trả về đúng
+  từng field; đã xóa Job test khỏi DB sau khi verify xong.
+- [ ] UAT trên trình duyệt thật.

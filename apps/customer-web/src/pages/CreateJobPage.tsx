@@ -8,6 +8,22 @@ import { useNavigate } from 'react-router-dom';
 import { catalogApi } from '../services/catalog';
 import { customerPortalApi } from '../services/customerPortal';
 import { useCustomerSession } from '../session/CustomerSession';
+import type { JobRequirementInput } from '../types/customer';
+
+const REQUIREMENT_TYPES = [
+  { value: 'SKILL', label: 'Kỹ năng' },
+  { value: 'CERTIFICATE', label: 'Chứng chỉ' },
+  { value: 'BEHAVIOR', label: 'Tác phong' },
+  { value: 'EXPERIENCE', label: 'Kinh nghiệm' },
+];
+
+const MINIMUM_LEVELS = [
+  { value: '', label: 'Không yêu cầu mức' },
+  { value: 'BASIC', label: 'Cơ bản' },
+  { value: 'INTERMEDIATE', label: 'Trung bình' },
+  { value: 'ADVANCED', label: 'Nâng cao' },
+  { value: 'EXPERT', label: 'Chuyên sâu' },
+];
 
 export function CreateJobPage() {
   const session = useCustomerSession();
@@ -33,6 +49,41 @@ export function CreateJobPage() {
   const [endAt, setEndAt] = useState('');
   const [budget, setBudget] = useState('');
 
+  const [requirements, setRequirements] = useState<
+    JobRequirementInput[]
+  >([]);
+  const [reqType, setReqType] = useState('SKILL');
+  const [reqDescription, setReqDescription] =
+    useState('');
+  const [reqMandatory, setReqMandatory] = useState(true);
+  const [reqMinimumLevel, setReqMinimumLevel] =
+    useState('');
+
+  const addRequirement = () => {
+    if (!reqDescription) {
+      return;
+    }
+
+    setRequirements((current) => [
+      ...current,
+      {
+        requirementType: reqType,
+        description: reqDescription,
+        mandatory: reqMandatory,
+        minimumLevel: reqMinimumLevel || undefined,
+      },
+    ]);
+    setReqDescription('');
+    setReqMandatory(true);
+    setReqMinimumLevel('');
+  };
+
+  const removeRequirement = (index: number) => {
+    setRequirements((current) =>
+      current.filter((_, i) => i !== index),
+    );
+  };
+
   const mutation = useMutation({
     mutationFn: () =>
       customerPortalApi.createJob(
@@ -48,7 +99,7 @@ export function CreateJobPage() {
           customerBudget: budget
             ? Number(budget)
             : undefined,
-          requirements: [],
+          requirements,
         },
       ),
     onSuccess: (result) => {
@@ -176,6 +227,134 @@ export function CreateJobPage() {
             }
           />
         </label>
+
+        <div className="requirement-builder">
+          <h2>Yêu cầu công việc</h2>
+          <p>
+            Thêm các yêu cầu về kỹ năng, chứng chỉ hoặc tác
+            phong (không bắt buộc).
+          </p>
+
+          {requirements.length > 0 && (
+            <div className="requirement-list">
+              {requirements.map((item, index) => (
+                <div
+                  key={index}
+                  className="requirement-row"
+                >
+                  <div>
+                    <strong>
+                      {
+                        REQUIREMENT_TYPES.find(
+                          (type) =>
+                            type.value ===
+                            item.requirementType,
+                        )?.label
+                      }
+                    </strong>
+                    {item.mandatory ? (
+                      <span className="requirement-tag mandatory">
+                        Bắt buộc
+                      </span>
+                    ) : (
+                      <span className="requirement-tag">
+                        Tùy chọn
+                      </span>
+                    )}
+                    {item.minimumLevel && (
+                      <span className="requirement-tag">
+                        {
+                          MINIMUM_LEVELS.find(
+                            (level) =>
+                              level.value ===
+                              item.minimumLevel,
+                          )?.label
+                        }
+                      </span>
+                    )}
+                    <p>{item.description}</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="secondary-button danger"
+                    onClick={() =>
+                      removeRequirement(index)
+                    }
+                  >
+                    Xóa
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="form-row three">
+            <label>
+              Loại yêu cầu
+              <select
+                value={reqType}
+                onChange={(event) =>
+                  setReqType(event.target.value)
+                }
+              >
+                {REQUIREMENT_TYPES.map((type) => (
+                  <option
+                    key={type.value}
+                    value={type.value}
+                  >
+                    {type.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Mức tối thiểu
+              <select
+                value={reqMinimumLevel}
+                onChange={(event) =>
+                  setReqMinimumLevel(event.target.value)
+                }
+              >
+                {MINIMUM_LEVELS.map((level) => (
+                  <option
+                    key={level.value}
+                    value={level.value}
+                  >
+                    {level.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={reqMandatory}
+                onChange={(event) =>
+                  setReqMandatory(event.target.checked)
+                }
+              />
+              Bắt buộc
+            </label>
+          </div>
+          <label>
+            Mô tả yêu cầu
+            <input
+              value={reqDescription}
+              onChange={(event) =>
+                setReqDescription(event.target.value)
+              }
+              placeholder="Ví dụ: Đã xác minh kỹ năng lễ tân sự kiện"
+            />
+          </label>
+          <button
+            type="button"
+            className="secondary-button"
+            disabled={!reqDescription}
+            onClick={addRequirement}
+          >
+            Thêm yêu cầu
+          </button>
+        </div>
 
         {mutation.isError && (
           <div className="inline-error">
