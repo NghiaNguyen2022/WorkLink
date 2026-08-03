@@ -91,3 +91,56 @@ export interface JobQualityOverview {
   customerMetric?: Record<string, unknown> | null;
   rehires: RehireLink[];
 }
+
+export interface CancellationAssessment {
+  id: string;
+  jobId: string;
+  assignmentId?: string | null;
+  eventType: string;
+  cancelledByParty: string;
+  status: string;
+  customerFeeAmount: number;
+  workerCompensationAmount: number;
+  reason: string;
+}
+
+export interface ReplacementRequest {
+  id: string;
+  jobId: string;
+  originalAssignmentId: string;
+  replacementWorkerId?: string | null;
+  status: string;
+  priority: string;
+  reason: string;
+}
+
+export interface SupportCase {
+  id: string;
+  caseCode: string;
+  jobId?: string | null;
+  caseType: string;
+  priority: string;
+  status: string;
+  subject: string;
+  description: string;
+}
+
+export interface FinancialAdjustment {
+  id: string;
+  supportCaseId: string;
+  jobId: string;
+  adjustmentType: string;
+  amount: number;
+  currency: string;
+  status: string;
+  reason: string;
+}
+
+export interface JobExceptionOverview {
+  jobId: string;
+  policyVersion: string;
+  assessments: CancellationAssessment[];
+  replacements: ReplacementRequest[];
+  cases: SupportCase[];
+  adjustments: FinancialAdjustment[];
+}
