@@ -1,43 +1,55 @@
-# WorkLink Baseline 10.3 — Lucide Icon Fix
+# WorkLink Baseline 11.1 — Pricing Quote Field Fix
 
-## Lỗi
+## Nguyên nhân
+
+Schema `pricingQuotes` hiện dùng:
 
 ```text
-lucide-react does not provide an export named BanknoteArrowDown
+quoteStatus
+customerTotal
+acceptedAt
+acceptedByUserId
 ```
 
-## Sửa
+Baseline 11 đã dùng nhầm:
 
-Thay:
-
-```ts
-BanknoteArrowDown
+```text
+status
+customerPrice
+approvedAt
 ```
 
-bằng:
+## Thay đổi
 
-```ts
-Banknote
+Backend:
+
+```text
+quote.status       → quote.quoteStatus
+quote.customerPrice → quote.customerTotal
+approvedAt         → acceptedAt
+status APPROVED    → quoteStatus ACCEPTED
+```
+
+Customer Web:
+
+```text
+status        → quoteStatus
+customerPrice → customerTotal
 ```
 
 ## Áp dụng
 
 ```powershell
 cd D:\Source\Git\WorkLink
-node scripts/apply-baseline-10-3.mjs
+node scripts/apply-baseline-11-1.mjs
 ```
 
-Sau đó chạy:
+Sau đó:
 
 ```powershell
-pnpm --filter @worklink/operations-web typecheck
-pnpm --filter @worklink/operations-web build
-pnpm --filter @worklink/operations-web dev
-```
+pnpm --filter @worklink/api typecheck
+pnpm --filter @worklink/api build
 
-Nếu Vite vẫn giữ cache cũ:
-
-```powershell
-Remove-Item -Recurse -Force apps\operations-web\node_modules\.vite -ErrorAction SilentlyContinue
-pnpm --filter @worklink/operations-web dev
+pnpm --filter @worklink/customer-web typecheck
+pnpm --filter @worklink/customer-web build
 ```

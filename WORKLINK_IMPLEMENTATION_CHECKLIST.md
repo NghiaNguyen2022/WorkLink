@@ -183,3 +183,50 @@
 - [x] ReportingController không phụ thuộc @types/express.
 - [ ] Chạy lại API typecheck.
 - [ ] Chạy lại API build.
+
+# Baseline 11 — Customer Web
+
+## Đã triển khai
+
+- [x] Customer Portal API riêng.
+- [x] Kiểm tra Job thuộc Customer.
+- [x] Customer Dashboard.
+- [x] Customer Job List.
+- [x] Customer Job Detail.
+- [x] Tạo Job Draft.
+- [x] Gửi Job xác minh.
+- [x] Duyệt báo giá.
+- [x] Xem Worker Assignment.
+- [x] Xem Check-in/Check-out.
+- [x] Xác nhận hoàn tất.
+- [x] Xem Payment.
+- [x] Review Worker.
+- [x] Preferred Worker.
+- [x] Re-hire.
+- [x] Complaint.
+- [x] React/Vite Customer Web.
+- [x] Responsive UI.
+
+## Chưa hoàn tất/UAT
+
+- [ ] JWT Authentication.
+- [ ] Customer Profile UI.
+- [ ] Location Management UI.
+- [ ] Category picker thay cho nhập ID.
+- [ ] Location picker thay cho nhập ID.
+- [ ] Requirement builder.
+- [ ] Payment gateway.
+- [ ] Blocked action trên UI.
+- [ ] Dispute detail/status.
+- [ ] UAT toàn bộ Customer journey.
+
+## Baseline 11.1 — Pricing Quote Field Fix
+
+- [x] Đồng bộ pricingQuotes.quoteStatus.
+- [x] Đồng bộ pricingQuotes.customerTotal.
+- [x] Dùng acceptedAt thay approvedAt.
+- [x] Lưu acceptedByUserId.
+- [x] Customer Web hiển thị quoteStatus.
+- [x] Customer Web hiển thị customerTotal.
+- [ ] Chạy lại API typecheck.
+- [ ] Chạy lại Customer Web typecheck.

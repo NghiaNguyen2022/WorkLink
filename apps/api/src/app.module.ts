@@ -5,6 +5,7 @@ import { envValidationSchema } from './common/config/env.validation';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CustomersModule } from './modules/customers/customers.module';
+import { CustomerPortalModule } from './modules/customer-portal/customer-portal.module';
 import { ExecutionModule } from './modules/execution/execution.module';
 import { ExceptionsModule } from './modules/exceptions/exceptions.module';
 import { FinanceModule } from './modules/finance/finance.module';
@@ -28,6 +29,7 @@ import { WorkersModule } from './modules/workers/workers.module';
     UsersModule,
     AuthModule,
     CustomersModule,
+    CustomerPortalModule,
     WorkersModule,
     JobsModule,
     MatchingModule,

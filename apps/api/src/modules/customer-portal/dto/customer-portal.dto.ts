@@ -1,0 +1,183 @@
+import {
+  IsArray,
+  IsBoolean,
+  IsIn,
+  IsInt,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
+
+export class CreateCustomerJobDto {
+  @IsUUID()
+  customerUserId!: string;
+
+  @IsUUID()
+  categoryId!: string;
+
+  @IsUUID()
+  locationId!: string;
+
+  @IsString()
+  @MaxLength(200)
+  title!: string;
+
+  @IsString()
+  @MaxLength(5000)
+  description!: string;
+
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  headcount!: number;
+
+  @IsString()
+  startAt!: string;
+
+  @IsString()
+  endAt!: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  breakMinutes?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  customerBudget?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  dressCode?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(30)
+  toolsProvidedBy?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  specialNotes?: string;
+
+  @IsOptional()
+  @IsArray()
+  requirements?: Array<{
+    requirementType: string;
+    requirementCode?: string;
+    description: string;
+    mandatory: boolean;
+    minimumLevel?: string;
+  }>;
+}
+
+export class CustomerActionDto {
+  @IsUUID()
+  customerUserId!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  note?: string;
+}
+
+export class ApproveQuoteDto extends CustomerActionDto {
+  @IsUUID()
+  quoteId!: string;
+}
+
+export class CustomerReviewDto {
+  @IsUUID()
+  customerUserId!: string;
+
+  @IsUUID()
+  assignmentId!: string;
+
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  overallRating!: number;
+
+  @IsOptional()
+  @IsObject()
+  criteria?: Record<string, number>;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  comment?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  wouldHireAgain?: boolean;
+}
+
+export class CustomerRelationshipDto {
+  @IsUUID()
+  customerUserId!: string;
+
+  @IsUUID()
+  workerId!: string;
+
+  @IsString()
+  @IsIn(['PREFERRED', 'BLOCKED', 'NEUTRAL'])
+  preferenceType!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  reason?: string;
+}
+
+export class CustomerRehireDto {
+  @IsUUID()
+  customerUserId!: string;
+
+  @IsOptional()
+  @IsUUID()
+  preferredWorkerId?: string;
+
+  @IsString()
+  startAt!: string;
+
+  @IsString()
+  endAt!: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  specialNotes?: string;
+}
+
+export class CustomerComplaintDto {
+  @IsUUID()
+  customerUserId!: string;
+
+  @IsString()
+  @IsIn(['COMPLAINT', 'DISPUTE'])
+  caseType!: string;
+
+  @IsString()
+  @IsIn(['NORMAL', 'HIGH', 'CRITICAL'])
+  priority!: string;
+
+  @IsString()
+  @MaxLength(200)
+  subject!: string;
+
+  @IsString()
+  @MaxLength(5000)
+  description!: string;
+}

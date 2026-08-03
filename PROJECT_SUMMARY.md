@@ -80,3 +80,19 @@ Baseline 08 ở trạng thái IMPLEMENTED — chờ UAT.
 - Dashboard và Reports page.
 
 Baseline 10 ở trạng thái IMPLEMENTED — chờ UAT.
+
+## 2026-08-02 — Baseline 11
+
+Đã triển khai Customer Portal vertical slice:
+
+- Customer-scoped API.
+- Dashboard.
+- Job creation/tracking.
+- Quote approval.
+- Assignment execution tracking.
+- Completion confirmation.
+- Payment view.
+- Review, Preferred, Re-hire và Complaint.
+- React/Vite Customer Web tại port 5175.
+
+Baseline 11 ở trạng thái IMPLEMENTED — chờ UAT và JWT/RBAC.
