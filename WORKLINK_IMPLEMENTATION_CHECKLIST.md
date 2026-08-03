@@ -267,10 +267,11 @@
 
 ## Baseline 13 — Kế hoạch song song tiếp theo (theo BPRD §19.2)
 
-- [ ] Track A: Worker Portal API (`apps/api/src/modules/worker-portal`) + Worker Mobile App (Expo/React Native).
-- [ ] Track B: Operations Web — form mở dispute, fulfill replacement, approve adjustment; `@Roles()` theo từng endpoint.
+- [x] Track A: Worker Portal API (`apps/api/src/modules/worker-portal`) + Worker Mobile App (Expo/React Native).
+- [x] Track B: Operations Web — form mở dispute, fulfill replacement, approve adjustment.
 - [x] Track C: Customer Web — Profile UI, Location management UI, category/location picker, dispute detail/status.
 - [ ] Track D (sau): Public Website (Next.js), theo giai đoạn Pilot của BPRD.
+- [ ] `@Roles()` chi tiết theo từng endpoint Operations (dispute/replacement/adjustment hiện chỉ yêu cầu "đã đăng nhập").
 
 ### Track C — chi tiết
 
@@ -282,3 +283,26 @@
 - [x] `pnpm --filter @worklink/api typecheck` và `pnpm --filter @worklink/customer-web typecheck` pass.
 - [x] Smoke test thủ công qua curl với DB thật (seed `customer@worklink.local`): login, GET/PATCH profile, GET/POST locations, GET job-categories, GET job detail có `disputes`, 401/403/404 đúng theo kỳ vọng.
 - [ ] UAT trên trình duyệt thật.
+
+### Track B — chi tiết
+
+- [x] Form Fulfill Replacement (dropdown request `OPEN`, nhập workerId, payout, retention) → `POST replacement-requests/:id/fulfill`.
+- [x] Form Open Dispute (caseType, priority, subject, description) → `POST jobs/:jobId/disputes`.
+- [x] Form Approve Adjustment (dropdown adjustment `PROPOSED`) → `POST financial-adjustments/:id/approve`.
+- [x] `apps/operations-web/src/services/exceptions.ts` — service wrapper mới, cùng convention `jobsApi`/`reportingApi`.
+- [x] Gắn vào `ExceptionOverviewPanel.tsx` hiện có trên Job Detail.
+- [x] `pnpm --filter @worklink/operations-web typecheck` pass.
+- [x] Smoke test end-to-end qua trình duyệt thật: replacement `OPEN → FULFILLED` (tạo assignment mới), dispute xuất hiện đúng trong danh sách case, adjustment `PROPOSED → APPROVED` (sinh payment mới).
+
+### Track A — chi tiết
+
+- [x] `apps/api/src/modules/worker-portal`: mirror pattern `customer-portal` — `@Roles('WORKER')`, `@CurrentUser()`, `assertWorker(workerId, workerUserId)` ownership check (403 khi sai chủ sở hữu).
+- [x] Endpoints: dashboard, profile (GET/PATCH), availability (CRUD), skills/certificates (read-only), offers (list + respond — ủy quyền `MatchingService.respond` sau khi xác minh offer thuộc đúng worker), assignments (list/detail + check-in/check-out/evidence/incidents — ủy quyền `ExecutionService`), earnings (ủy quyền `FinanceService`), reviews (ủy quyền `QualityService`, `WORKER_TO_CUSTOMER`).
+- [x] `apps/mobile-app`: thay skeleton bằng Expo + TypeScript thật (SDK 57, React Navigation, TanStack Query, `expo-secure-store`, `expo-location`).
+- [x] Màn hình: Login, Dashboard, Job Feed/Offers, Assignments list + detail (check-in/out GPS thật), Earnings, Profile/Availability, Skills.
+- [x] `pnpm --filter @worklink/api typecheck` + `build` pass.
+- [x] `pnpm --filter @worklink/mobile-app typecheck` pass; `expo export -p web` bundle thành công (542 modules).
+- [x] Smoke test qua curl với DB thật: không token → 401; đúng worker → 200; sai workerId → 403; sai vai trò (CUSTOMER gọi worker-portal) → 403.
+- [ ] UAT trên thiết bị/simulator thật (chưa có môi trường mobile trong sandbox này).
+
+**Lưu ý vận hành:** agent nền chạy Track A khởi tạo từ một worktree bị lệch base (trước baseline 12/Track B/C), nên nhánh gốc của nó lẽ ra sẽ revert các track khác nếu merge thẳng. Đã tích hợp thủ công — chỉ lấy phần thật sự mới (`worker-portal`, `apps/mobile-app`, đăng ký module) đặt lên trên `main` hiện tại, chạy lại `pnpm install`/typecheck/build/smoke-test từ đầu thay vì tin tưởng báo cáo của agent.

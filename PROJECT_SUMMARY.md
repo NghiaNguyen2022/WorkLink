@@ -134,7 +134,43 @@ khách hàng → 200; token đúng nhưng sai `customerId` → 403; token sai
 vai trò (WORKER gọi customer-portal) → 403; đăng ký mới → nhận JWT +
 `profileId` hợp lệ.
 
-Baseline 12 ở trạng thái IMPLEMENTED — chờ UAT. Các bước kế tiếp theo
-BPRD: song song hóa Track A (Worker Portal API + Worker Mobile App
-Expo), Track B (nốt 3 form Operations Web), Track C (profile/location
-picker cho Customer Web); Track D (Public Website) để sau.
+Baseline 12 ở trạng thái IMPLEMENTED — chờ UAT.
+
+## 2026-08-03 — Baseline 13: Ba track song song (Worker Portal, Operations forms, Customer hardening)
+
+Sau Baseline 12, chạy song song 3 track qua background agent trong git
+worktree riêng biệt, review và tích hợp lần lượt vào `main`:
+
+- **Track C — Customer Web hardening**: `customer-portal` có thêm
+  `GET/PATCH profile` và `GET/POST/PATCH locations` (cùng cơ chế
+  ownership `assertCustomer`); `customer-web` có trang Hồ sơ, trang
+  Địa điểm, category/location picker (thay ô nhập ID thủ công) trong
+  `CreateJobPage`, và danh sách dispute read-only trên Job Detail.
+  Merge fast-forward, sạch.
+- **Track B — Operations Web**: 3 form còn thiếu (mở dispute, fulfill
+  replacement, approve adjustment) gắn vào `ExceptionOverviewPanel.tsx`
+  hiện có, cùng service `exceptions.ts` mới. Đã smoke-test qua trình
+  duyệt thật, cả 3 luồng chạy đúng end-to-end. Merge qua merge commit,
+  sạch.
+- **Track A — Worker Portal + Worker Mobile App**: `apps/api/src/modules/worker-portal`
+  (mirror pattern `customer-portal`, đủ dashboard/profile/availability/
+  skills/offers/assignments/check-in-out/earnings/reviews, ủy quyền
+  cho `MatchingService`/`ExecutionService`/`FinanceService`/`QualityService`
+  có sẵn); `apps/mobile-app` thay bằng ứng dụng Expo + TypeScript thật
+  (SDK 57, React Navigation, TanStack Query, GPS check-in/out thật).
+  **Lưu ý:** worktree của agent này bị lệch base (trước cả Baseline 12),
+  nên nhánh gốc của nó sẽ revert Track B/C nếu merge thẳng — đã tích
+  hợp thủ công, chỉ lấy phần thật sự mới, chạy lại toàn bộ
+  install/typecheck/build/smoke-test từ đầu trên `main` hiện tại thay
+  vì tin báo cáo của agent.
+
+Toàn bộ 3 track đã re-verify cùng lúc trên `main` sau khi tích hợp:
+typecheck sạch cho `api`, `customer-web`, `operations-web`,
+`mobile-app`; smoke test curl xác nhận cả customer-portal, worker-portal
+và các endpoint exceptions hoạt động đúng cùng nhau (không track nào
+đè lên track khác).
+
+Baseline 13 ở trạng thái IMPLEMENTED — chờ UAT trên trình duyệt/thiết
+bị thật. Còn lại theo BPRD: Track D (Public Website) để giai đoạn
+Pilot; phân quyền `@Roles()` chi tiết theo từng endpoint Operations;
+requirement builder và payment gateway cho Customer Web.
