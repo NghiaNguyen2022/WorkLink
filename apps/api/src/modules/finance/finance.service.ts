@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -24,6 +25,8 @@ import {
   workerProfiles,
   workSessions,
 } from '../../database/schema/index';
+import { PAYMENT_GATEWAY_PROVIDER } from '../payment-gateway/payment-gateway.token';
+import type { PaymentGatewayProvider } from '../payment-gateway/payment-gateway.types';
 import {
   AddAdjustmentDto,
   ApproveSettlementDto,
@@ -35,6 +38,8 @@ import {
 export class FinanceService {
   constructor(
     private readonly database: DatabaseService,
+    @Inject(PAYMENT_GATEWAY_PROVIDER)
+    private readonly paymentGateway: PaymentGatewayProvider,
   ) {}
 
   async prepare(
@@ -398,6 +403,42 @@ export class FinanceService {
       workerGroups.set(line.workerId, current);
     }
 
+    const customerPaymentId = randomUUID();
+    const customerIntent =
+      await this.paymentGateway.createPaymentIntent({
+        paymentId: customerPaymentId,
+        jobId,
+        amount: settlement.customerTotalAmount,
+        currency: settlement.currency,
+        purpose: 'CUSTOMER_CHARGE',
+      });
+
+    const workerPayouts = await Promise.all(
+      Array.from(workerGroups.entries())
+        .filter(([, worker]) => worker.amount > 0)
+        .map(async ([workerId, worker]) => {
+          const paymentId = randomUUID();
+          const amount = this.roundMoney(worker.amount);
+
+          const intent =
+            await this.paymentGateway.createPayout({
+              paymentId,
+              workerId,
+              amount,
+              currency: settlement.currency,
+              bankAccountNumber: null,
+              bankAccountName: null,
+            });
+
+          return {
+            paymentId,
+            assignmentId: worker.assignmentId,
+            amount,
+            intent,
+          };
+        }),
+    );
+
     await this.database.db.transaction(async (tx) => {
       await tx
         .update(settlements)
@@ -409,27 +450,27 @@ export class FinanceService {
         .where(eq(settlements.id, settlement.id));
 
       await tx.insert(payments).values({
-        id: randomUUID(),
+        id: customerPaymentId,
         jobId,
         paymentType: 'CUSTOMER_CHARGE',
         status: 'PENDING',
         amount: settlement.customerTotalAmount,
         currency: settlement.currency,
+        provider: customerIntent.provider,
+        providerReference: customerIntent.providerReference,
       });
 
-      for (const worker of workerGroups.values()) {
-        if (worker.amount <= 0) {
-          continue;
-        }
-
+      for (const payout of workerPayouts) {
         await tx.insert(payments).values({
-          id: randomUUID(),
+          id: payout.paymentId,
           jobId,
-          assignmentId: worker.assignmentId,
+          assignmentId: payout.assignmentId,
           paymentType: 'WORKER_PAYOUT',
           status: 'PENDING',
-          amount: this.roundMoney(worker.amount),
+          amount: payout.amount,
           currency: settlement.currency,
+          provider: payout.intent.provider,
+          providerReference: payout.intent.providerReference,
         });
       }
     });
@@ -516,6 +557,102 @@ export class FinanceService {
     });
 
     return this.getPayment(paymentId);
+  }
+
+  /**
+   * Entry point for a real gateway's webhook callback. Signature
+   * verification, idempotency and status mapping are all handled
+   * through the PaymentGatewayProvider port so this method never
+   * changes when a real provider replaces the mock one.
+   */
+  async handleGatewayWebhook(
+    rawBody: string,
+    signature: string | undefined,
+    payload: Record<string, unknown>,
+  ) {
+    if (
+      !this.paymentGateway.verifyWebhookSignature(
+        rawBody,
+        signature,
+      )
+    ) {
+      throw new BadRequestException(
+        'Chữ ký webhook không hợp lệ',
+      );
+    }
+
+    const event =
+      this.paymentGateway.parseWebhookEvent(payload);
+    const webhookEventType = `GATEWAY_${event.eventType}`;
+
+    const [alreadyProcessed] = await this.database.db
+      .select({ id: paymentEvents.id })
+      .from(paymentEvents)
+      .where(
+        and(
+          eq(
+            paymentEvents.providerReference,
+            event.providerReference,
+          ),
+          eq(paymentEvents.eventType, webhookEventType),
+        ),
+      )
+      .limit(1);
+
+    if (alreadyProcessed) {
+      return { received: true, duplicate: true };
+    }
+
+    const [payment] = await this.database.db
+      .select()
+      .from(payments)
+      .where(
+        eq(
+          payments.providerReference,
+          event.providerReference,
+        ),
+      )
+      .limit(1);
+
+    if (!payment) {
+      throw new NotFoundException(
+        'Không tìm thấy payment ứng với providerReference',
+      );
+    }
+
+    const succeeded =
+      event.eventType === 'PAYMENT_SUCCEEDED' ||
+      event.eventType === 'PAYOUT_SUCCEEDED';
+    const nextStatus = succeeded ? 'PAID' : 'FAILED';
+
+    if (payment.status !== 'PAID') {
+      await this.database.db.transaction(async (tx) => {
+        await tx
+          .update(payments)
+          .set({
+            status: nextStatus,
+            paidAt: succeeded ? new Date() : undefined,
+          })
+          .where(eq(payments.id, payment.id));
+
+        await tx.insert(paymentEvents).values({
+          id: randomUUID(),
+          paymentId: payment.id,
+          eventType: webhookEventType,
+          fromStatus: payment.status,
+          toStatus: nextStatus,
+          providerReference: event.providerReference,
+          note: `Webhook từ ${this.paymentGateway.name}`,
+          metadata: event.raw,
+        });
+      });
+
+      if (succeeded) {
+        await this.closeSettlementWhenPaid(payment.jobId);
+      }
+    }
+
+    return { received: true, duplicate: false };
   }
 
   async getByJob(jobId: string) {

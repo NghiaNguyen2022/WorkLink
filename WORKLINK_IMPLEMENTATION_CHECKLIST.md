@@ -215,7 +215,7 @@
 - [x] Category picker thay cho nhập ID (Track C, Baseline 13).
 - [x] Location picker thay cho nhập ID (Track C, Baseline 13).
 - [x] Requirement builder (Baseline 13.3).
-- [ ] Payment gateway.
+- [x] Payment gateway — kiến trúc ghép nối sẵn sàng, provider thật chưa chọn (Baseline 13.5).
 - [x] Blocked action trên UI (Baseline 13.2 — nút "Chặn Worker" trên Job Detail, dùng chung endpoint relationships với PREFERRED).
 - [x] Dispute detail/status (Track C, Baseline 13, read-only list trên Job Detail).
 - [ ] UAT toàn bộ Customer journey.
@@ -426,3 +426,59 @@ backend.
   cancellationRate: 1.5, onTimeRate: 98, verificationLevel: 'V4',
   verificationStatus: 'VERIFIED'`).
 - [ ] UAT trên thiết bị/simulator thật.
+
+## Baseline 13.5 — Payment Gateway: kiến trúc ghép nối (chưa chọn provider thật)
+
+Theo yêu cầu: dựng sẵn kiến trúc để cắm provider thật (VNPay/Momo/
+ZaloPay/Stripe...) sau này mà không phải sửa business logic, KHÔNG
+tích hợp provider thật ngay.
+
+### Backend — `apps/api/src/modules/payment-gateway` (mới)
+
+- [x] `payment-gateway.types.ts` — interface `PaymentGatewayProvider`
+  (port): `createPaymentIntent`, `capturePayment`, `refund`,
+  `createPayout`, `verifyWebhookSignature`, `parseWebhookEvent`.
+- [x] `payment-gateway.token.ts` — injection token
+  `PAYMENT_GATEWAY_PROVIDER` (DI theo interface, không theo class cụ
+  thể).
+- [x] `providers/mock-payment-gateway.provider.ts` — provider mặc định
+  cho local/dev, không gọi mạng thật, luôn thành công, log rõ `[MOCK]`
+  để không ai nhầm là provider thật.
+- [x] `payment-gateway.module.ts` — factory chọn provider theo env
+  `PAYMENT_GATEWAY_PROVIDER` (hiện chỉ có `mock`; thêm case mới khi có
+  provider thật, không đổi chỗ nào khác).
+- [x] `.env`/`.env.example`: thêm `PAYMENT_GATEWAY_PROVIDER=mock`.
+
+### Wiring vào Finance
+
+- [x] `FinanceService.approve()`: khi duyệt settlement, gọi
+  `createPaymentIntent` (customer charge) và `createPayout` (từng
+  worker payout) NGAY khi tạo payment row — `provider`/
+  `providerReference` có giá trị thật từ lúc tạo, không còn để trống
+  chờ `markPaid` thủ công.
+- [x] `FinanceService.handleGatewayWebhook()` — endpoint webhook thật
+  sự dùng được: xác minh chữ ký qua `provider.verifyWebhookSignature`,
+  parse event qua `provider.parseWebhookEvent`, **idempotent** (dò
+  trùng theo `providerReference` + `eventType` trong `payment_events`
+  trước khi xử lý), tra payment theo `providerReference`, cập nhật
+  trạng thái PAID/FAILED, đóng settlement khi đủ payment PAID.
+- [x] `POST payment-gateway/webhook` — `@Public()` (caller là gateway,
+  không phải user đăng nhập).
+- [x] `markPaid`/`fail` (thao tác tay của vận hành) giữ nguyên không
+  đổi — vẫn cần cho reconciliation thủ công theo nguyên tắc BPRD "con
+  người kiểm soát".
+
+### Verify
+
+- [x] `pnpm --filter @worklink/api typecheck` + `build` pass.
+- [x] Webhook end-to-end với DB thật: tạo payment test có
+  `providerReference` → gọi webhook `PAYMENT_SUCCEEDED` → payment
+  chuyển `PAID` đúng; gọi lại y hệt lần 2 → `duplicate: true`, không
+  tạo thêm `payment_events` (đúng 1 row); test riêng
+  `PAYOUT_FAILED` → payment chuyển `FAILED` đúng. Toàn bộ dữ liệu test
+  đã xóa sau khi verify.
+- [ ] Chưa verify được `approve()` gọi gateway qua toàn bộ luồng HTTP
+  thật (seed data hiện không có Job COMPLETED kèm work session đã
+  xác nhận để chạy `settlement/prepare` → `approve`) — đã review code
+  kỹ, logic dùng chung với phần webhook đã verify.
+- [ ] Chọn provider thật + tích hợp (DEC cần chốt, xem BPRD DEC-04).

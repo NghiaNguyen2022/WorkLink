@@ -19,4 +19,8 @@ export const envValidationSchema = Joi.object({
 
   JWT_SECRET: Joi.string().min(16).required(),
   JWT_EXPIRES_IN: Joi.string().default('1d'),
+
+  PAYMENT_GATEWAY_PROVIDER: Joi.string()
+    .valid('mock')
+    .default('mock'),
 });

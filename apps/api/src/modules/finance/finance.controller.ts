@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Param,
   Post,
   Query,
@@ -11,6 +12,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
+import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import {
   AddAdjustmentDto,
@@ -115,5 +117,30 @@ export class FinanceController {
   @Get('finance/settlements')
   listSettlements() {
     return this.financeService.listSettlements();
+  }
+
+  /**
+   * Real gateway callback target. Public because the caller is the
+   * payment provider, not a logged-in user. NOTE: a real provider
+   * integration needs the exact raw request body for signature
+   * verification (Nest's default body parser already re-serializes
+   * it here) — wire `rawBody: true` in main.ts's NestFactory.create
+   * when a real provider is added.
+   */
+  @Public()
+  @Post('payment-gateway/webhook')
+  @ApiOperation({
+    summary: 'Webhook nhận sự kiện từ payment gateway',
+  })
+  handleGatewayWebhook(
+    @Body() body: Record<string, unknown>,
+    @Headers('x-gateway-signature')
+    signature: string | undefined,
+  ) {
+    return this.financeService.handleGatewayWebhook(
+      JSON.stringify(body),
+      signature,
+      body,
+    );
   }
 }
