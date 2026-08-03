@@ -1,7 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
+cd /d "%~dp0"
 
 echo Dang dung cac service WorkLink (port 4000, 5174, 5175)...
+echo Chay ngay trong terminal nay - khong mo cua so moi.
 echo.
 
 for %%P in (4000 5174 5175) do (
@@ -16,4 +18,4 @@ for %%P in (4000 5174 5175) do (
 
 echo.
 echo Xong.
-pause
+endlocal

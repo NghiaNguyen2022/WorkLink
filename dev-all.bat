@@ -1,7 +1,6 @@
 @echo off
 setlocal
-
-set ROOT=%~dp0
+cd /d "%~dp0"
 
 echo ============================================
 echo  WorkLink - Dev Launcher
@@ -10,25 +9,22 @@ echo.
 echo Yeu cau: MySQL phai dang chay tai 127.0.0.1:3306
 echo (xem apps\api\.env hoac .env o repo root).
 echo.
-
-echo [1/3] Starting API (backend)  -^> http://localhost:4000/api
-start "WorkLink API (4000)" cmd /k "cd /d "%ROOT%" && pnpm --filter @worklink/api dev"
-
-timeout /t 3 /nobreak >nul
-
-echo [2/3] Starting Operations Web -^> http://localhost:5174
-start "WorkLink Operations Web (5174)" cmd /k "cd /d "%ROOT%" && pnpm --filter @worklink/operations-web dev"
-
-echo [3/3] Starting Customer Web   -^> http://localhost:5175
-start "WorkLink Customer Web (5175)" cmd /k "cd /d "%ROOT%" && pnpm --filter @worklink/customer-web dev"
-
+echo Chay nen trong CHINH terminal nay - khong mo cua so cmd/powershell moi.
 echo.
-echo Da mo 3 cua so rieng biet:
-echo   API (Swagger docs):  http://localhost:4000/api/docs
-echo   Operations Web:      http://localhost:5174
-echo   Customer Web:        http://localhost:5175
+
+start /B "" cmd /c "pnpm --filter @worklink/api dev > api.log 2>&1"
+start /B "" cmd /c "pnpm --filter @worklink/operations-web dev > operations-web.log 2>&1"
+start /B "" cmd /c "pnpm --filter @worklink/customer-web dev > customer-web.log 2>&1"
+
+echo Da khoi dong 3 service trong nen:
+echo   API (Swagger docs):  http://localhost:4000/api/docs   (log: api.log)
+echo   Operations Web:      http://localhost:5174            (log: operations-web.log)
+echo   Customer Web:        http://localhost:5175            (log: customer-web.log)
 echo.
-echo Dong tung cua so (hoac Ctrl+C ben trong) de dung tung service.
-echo Dung dev-stop.bat de dung tat ca cung luc.
+echo Xem log truc tiep (vi du):   type api.log
+echo   PowerShell:                Get-Content api.log -Wait
+echo Dung tat ca:                 dev-stop.bat
 echo.
-pause
+
+timeout /t 2 /nobreak >nul
+endlocal
